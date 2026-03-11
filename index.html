@@ -1,474 +1,503 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Shift Income Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root{
-      --bg:#0b0f10;
-      --panel:#12191b;
-      --panel-2:#182224;
-      --panel-3:#0f1517;
-      --text:#e8f6f5;
-      --muted:#9bb8b6;
-      --accent:#25dbc8;
-      --accent-2:#14b8a6;
-      --danger:#ff5f6d;
-      --warn:#ffb84d;
-      --border:#233336;
-      --shadow:0 10px 28px rgba(0,0,0,.35);
-      --radius:18px;
+    :root {
+      --bg: #0a0f10;
+      --bg-soft: #101718;
+      --panel: #131c1e;
+      --panel-2: #182426;
+      --panel-3: #0f1516;
+      --border: #223436;
+      --accent: #28d7c5;
+      --accent-2: #17b8a7;
+      --text: #e8f5f4;
+      --muted: #94b5b2;
+      --danger: #ff6e7a;
+      --warning: #ffbe5c;
+      --shadow: 0 14px 32px rgba(0, 0, 0, 0.34);
+      --radius: 20px;
+      --radius-sm: 14px;
     }
 
-    *{ box-sizing:border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
-    body{
-      margin:0;
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    html, body {
+      margin: 0;
+      padding: 0;
       background:
-        radial-gradient(circle at top right, rgba(37,219,200,.08), transparent 26%),
-        radial-gradient(circle at top left, rgba(37,219,200,.05), transparent 22%),
-        var(--bg);
-      color:var(--text);
-      padding:18px;
+        radial-gradient(circle at top right, rgba(40, 215, 197, 0.10), transparent 24%),
+        radial-gradient(circle at top left, rgba(40, 215, 197, 0.06), transparent 20%),
+        linear-gradient(180deg, #091012, #0a0f10 35%, #0b1011);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      min-height: 100%;
     }
 
-    .app{
-      max-width:1280px;
-      margin:0 auto;
+    body {
+      padding: 14px;
     }
 
-    .hero{
-      background:linear-gradient(180deg, rgba(37,219,200,.12), rgba(37,219,200,.04));
-      border:1px solid var(--border);
-      border-radius:24px;
-      padding:22px 18px;
-      box-shadow:var(--shadow);
-      margin-bottom:18px;
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
     }
 
-    .hero h1{
-      margin:0;
-      font-size:1.9rem;
-      color:var(--accent);
-      letter-spacing:.3px;
-    }
-
-    .hero p{
-      margin:8px 0 0 0;
-      color:var(--muted);
-      line-height:1.45;
-      font-size:.98rem;
-    }
-
-    .cabinet-grid,
-    .lower-grid,
-    .charts-grid{
-      display:grid;
-      gap:16px;
-      margin-bottom:16px;
-    }
-
-    .cabinet-grid{
-      grid-template-columns:1.2fr .8fr;
-    }
-
-    .lower-grid,
-    .charts-grid{
-      grid-template-columns:1fr 1fr;
-    }
-
+    .hero,
     .drawer,
     .cabinet,
-    .panel{
-      background:linear-gradient(180deg, var(--panel), var(--panel-3));
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
+    .panel,
+    .week-drawer {
+      background: linear-gradient(180deg, var(--panel), var(--panel-3));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
     }
 
-    .drawer-header,
-    .cabinet-header,
-    .panel-header{
-      padding:14px 16px 10px;
-      border-bottom:1px solid rgba(255,255,255,.04);
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-start;
-      gap:10px;
+    .hero {
+      padding: 20px 18px;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, rgba(40, 215, 197, 0.12), rgba(40, 215, 197, 0.04));
     }
 
-    .drawer-title,
-    .cabinet-title,
-    .panel-title{
-      font-size:1rem;
-      font-weight:700;
-      color:var(--accent);
-      margin:0;
+    .hero-top {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
 
-    .drawer-sub,
-    .cabinet-sub{
-      color:var(--muted);
-      font-size:.88rem;
-      margin-top:4px;
-      line-height:1.35;
+    .hero h1 {
+      margin: 0;
+      font-size: 1.85rem;
+      line-height: 1.1;
+      color: var(--accent);
+      letter-spacing: 0.2px;
     }
 
-    .drawer-body,
-    .cabinet-body,
-    .panel-body{
-      padding:16px;
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: 0.98rem;
     }
 
-    .input-grid,
-    .filter-grid,
-    .stats-grid{
-      display:grid;
-      gap:12px;
+    .hero-snapshot {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
     }
 
-    .input-grid{
-      grid-template-columns:repeat(3, minmax(0,1fr));
+    .hero-chip {
+      background: rgba(17, 27, 29, 0.92);
+      border: 1px solid rgba(40, 215, 197, 0.16);
+      border-radius: 16px;
+      padding: 12px;
     }
 
-    .filter-grid{
-      grid-template-columns:repeat(4, minmax(0,1fr));
+    .hero-chip-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+      font-weight: 700;
     }
 
-    .stats-grid{
-      grid-template-columns:repeat(2, minmax(0,1fr));
+    .hero-chip-value {
+      margin-top: 8px;
+      font-size: 1.18rem;
+      font-weight: 800;
+      color: var(--text);
     }
 
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:6px;
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+      margin-bottom: 16px;
     }
 
-    .field.full{
-      grid-column:1 / -1;
+    .section-header {
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
     }
 
-    label{
-      font-size:.86rem;
-      color:var(--muted);
-      font-weight:600;
+    .section-title {
+      margin: 0;
+      color: var(--accent);
+      font-size: 1rem;
+      font-weight: 800;
+    }
+
+    .section-subtitle {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.35;
+    }
+
+    .section-body {
+      padding: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 0.84rem;
+      font-weight: 700;
+      letter-spacing: 0.15px;
     }
 
     input,
     select,
-    button{
-      width:100%;
-      border:none;
-      border-radius:14px;
-      padding:12px 13px;
-      font-size:16px;
+    button {
+      width: 100%;
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 12px 13px;
+      font-size: 16px;
+      font-family: inherit;
     }
 
     input,
-    select{
-      background:var(--panel-2);
-      color:var(--text);
-      border:1px solid #294042;
-      outline:none;
+    select {
+      color: var(--text);
+      background: var(--panel-2);
+      border: 1px solid #294144;
+      outline: none;
     }
 
     input:focus,
-    select:focus{
-      border-color:var(--accent);
-      box-shadow:0 0 0 3px rgba(37,219,200,.14);
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(40, 215, 197, 0.14);
     }
 
-    button{
-      cursor:pointer;
-      font-weight:800;
-      letter-spacing:.2px;
-      transition:transform .08s ease, opacity .15s ease;
+    .preview-box {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(24, 36, 38, 0.96), rgba(15, 21, 22, 0.96));
+      border: 1px solid rgba(40, 215, 197, 0.16);
     }
 
-    button:active{
-      transform:scale(.985);
+    .preview-title {
+      color: var(--accent);
+      font-size: 0.9rem;
+      font-weight: 800;
+      margin-bottom: 10px;
     }
 
-    .button-row{
-      display:grid;
-      grid-template-columns:repeat(4, 1fr);
-      gap:10px;
-      margin-top:12px;
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
 
-    .primary-btn{
-      background:linear-gradient(180deg, var(--accent), var(--accent-2));
-      color:#051313;
+    .preview-item {
+      background: rgba(20, 29, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 14px;
+      padding: 10px 12px;
     }
 
-    .secondary-btn{
-      background:#1a2628;
-      color:var(--text);
-      border:1px solid #294042;
+    .preview-label {
+      color: var(--muted);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.45px;
     }
 
-    .warning-btn{
-      background:rgba(255,184,77,.12);
-      color:#ffd08a;
-      border:1px solid rgba(255,184,77,.25);
+    .preview-value {
+      margin-top: 7px;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
     }
 
-    .danger-btn{
-      background:rgba(255,95,109,.13);
-      color:#ff8d96;
-      border:1px solid rgba(255,95,109,.25);
+    .warnings {
+      margin-top: 12px;
+      display: grid;
+      gap: 8px;
     }
 
-    .stat-card{
-      background:linear-gradient(180deg, #152022, #101719);
-      border:1px solid var(--border);
-      border-radius:16px;
-      padding:14px;
-      min-height:92px;
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
+    .warning-item {
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.86rem;
+      font-weight: 700;
     }
 
-    .stat-label{
-      color:var(--muted);
-      font-size:.82rem;
-      font-weight:700;
-      text-transform:uppercase;
-      letter-spacing:.5px;
+    .warning-item.warning {
+      background: rgba(255, 190, 92, 0.12);
+      border: 1px solid rgba(255, 190, 92, 0.26);
+      color: #ffd28c;
     }
 
-    .stat-value{
-      color:var(--text);
-      font-size:1.3rem;
-      font-weight:800;
-      margin-top:8px;
-      line-height:1.2;
+    .warning-item.danger {
+      background: rgba(255, 110, 122, 0.12);
+      border: 1px solid rgba(255, 110, 122, 0.26);
+      color: #ffadb4;
     }
 
-    .wide{
-      grid-column:1 / -1;
+    .button-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 14px;
     }
 
-    .week-range{
-      color:var(--accent);
-      font-weight:700;
-      font-size:.92rem;
-      margin-top:4px;
+    button {
+      cursor: pointer;
+      font-weight: 800;
+      transition: transform 0.08s ease, opacity 0.15s ease;
     }
 
-    .mini-list{
-      display:grid;
-      gap:10px;
+    button:active {
+      transform: scale(0.985);
     }
 
-    .mini-item{
-      background:linear-gradient(180deg, #162123, #12191b);
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:12px 13px;
-      display:flex;
-      justify-content:space-between;
-      gap:14px;
-      align-items:center;
+    .btn-primary {
+      background: linear-gradient(180deg, var(--accent), var(--accent-2));
+      color: #041212;
     }
 
-    .mini-item .name{
-      color:var(--text);
-      font-weight:700;
+    .btn-secondary {
+      background: #1b2729;
+      color: var(--text);
+      border: 1px solid #2c4345;
     }
 
-    .mini-item .value{
-      color:var(--accent);
-      font-weight:800;
-      white-space:nowrap;
+    .btn-danger {
+      background: rgba(255, 110, 122, 0.12);
+      color: #ffadb4;
+      border: 1px solid rgba(255, 110, 122, 0.22);
     }
 
-    .chart-wrap{
-      height:300px;
-      position:relative;
+    .mode-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.35;
     }
 
-    .table-shell{
-      overflow-x:auto;
-      border-radius:16px;
-      border:1px solid var(--border);
-      background:#0f1517;
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
     }
 
-    table{
-      width:100%;
-      border-collapse:collapse;
-      min-width:1200px;
+    .stat-card {
+      background: linear-gradient(180deg, #152022, #101618);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      min-height: 96px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
 
-    th, td{
-      padding:12px 10px;
-      text-align:left;
-      border-bottom:1px solid rgba(255,255,255,.05);
-      font-size:.94rem;
-      vertical-align:middle;
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
     }
 
-    th{
-      color:var(--accent);
-      background:#132022;
-      position:sticky;
-      top:0;
-      z-index:1;
+    .stat-value {
+      margin-top: 10px;
+      color: var(--text);
+      font-size: 1.25rem;
+      font-weight: 800;
+      line-height: 1.15;
     }
 
-    td{
-      color:#dcebea;
+    .stat-meta {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      line-height: 1.3;
     }
 
-    tr:hover td{
-      background:rgba(37,219,200,.04);
+    .stack {
+      display: grid;
+      gap: 16px;
     }
 
-    .tag-pill{
-      display:inline-block;
-      padding:7px 10px;
-      border-radius:999px;
-      background:#1b2b2d;
-      border:1px solid #274143;
-      color:var(--accent);
-      font-size:.8rem;
-      font-weight:700;
-      text-transform:capitalize;
+    details.week-drawer {
+      overflow: hidden;
     }
 
-    .action-cell{
-      white-space:nowrap;
+    details.week-drawer[open] {
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
     }
 
-    .table-btn{
-      width:auto;
-      padding:8px 10px;
-      border-radius:10px;
-      font-weight:800;
-      margin-right:6px;
+    .week-drawer summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      background: #122022;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
     }
 
-    .edit-btn{
-      background:rgba(37,219,200,.12);
-      color:var(--accent);
-      border:1px solid rgba(37,219,200,.25);
+    .week-drawer summary::-webkit-details-marker {
+      display: none;
     }
 
-    .delete-btn{
-      background:rgba(255,95,109,.13);
-      color:#ff8d96;
-      border:1px solid rgba(255,95,109,.25);
+    .week-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
-    .muted-note{
-      color:var(--muted);
-      font-size:.85rem;
-      line-height:1.45;
+    .week-title {
+      color: var(--accent);
+      font-size: 0.98rem;
+      font-weight: 800;
     }
 
-    .summary-row{
-      display:grid;
-      grid-template-columns:repeat(3, minmax(0,1fr));
-      gap:10px;
-      margin-top:12px;
+    .week-meta {
+      color: var(--muted);
+      font-size: 0.84rem;
     }
 
-    .summary-chip{
-      background:#142022;
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:12px;
+    .week-right {
+      text-align: right;
+      color: var(--text);
+      font-size: 0.86rem;
+      font-weight: 700;
+      line-height: 1.35;
     }
 
-    .summary-chip .label{
-      color:var(--muted);
-      font-size:.8rem;
-      font-weight:700;
-      text-transform:uppercase;
-      letter-spacing:.4px;
+    .table-shell {
+      overflow-x: auto;
     }
 
-    .summary-chip .value{
-      margin-top:6px;
-      color:var(--accent);
-      font-weight:800;
-      font-size:1rem;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 980px;
     }
 
-    details.week-card{
-      border:1px solid var(--border);
-      border-radius:14px;
-      background:linear-gradient(180deg, #162123, #12191b);
-      overflow:hidden;
+    th,
+    td {
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      text-align: left;
+      font-size: 0.92rem;
+      vertical-align: middle;
     }
 
-    details.week-card + details.week-card{
-      margin-top:10px;
+    th {
+      background: #132022;
+      color: var(--accent);
+      font-weight: 800;
     }
 
-    details.week-card summary{
-      list-style:none;
-      cursor:pointer;
-      padding:14px 14px;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      align-items:center;
-      color:var(--text);
-      font-weight:700;
+    tr:hover td {
+      background: rgba(40, 215, 197, 0.04);
     }
 
-    details.week-card summary::-webkit-details-marker{
-      display:none;
+    .tag-pill {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: #1b2b2d;
+      border: 1px solid #294143;
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: capitalize;
     }
 
-    .week-meta{
-      color:var(--accent);
-      font-weight:800;
-      white-space:nowrap;
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
     }
 
-    .week-body{
-      border-top:1px solid rgba(255,255,255,.05);
-      padding:12px 14px 14px;
+    .small-btn {
+      width: auto;
+      padding: 8px 10px;
+      font-size: 0.83rem;
+      border-radius: 10px;
     }
 
-    .empty-state{
-      color:var(--muted);
-      padding:8px 0;
+    .empty-state {
+      color: var(--muted);
+      padding: 4px 0;
+      font-size: 0.92rem;
     }
 
-    .hidden{
-      display:none !important;
+    .export-panel-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
     }
 
-    @media (max-width: 1050px){
-      .cabinet-grid,
-      .lower-grid,
-      .charts-grid{
-        grid-template-columns:1fr;
-      }
+    .small-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.84rem;
+      line-height: 1.4;
+    }
 
-      .input-grid,
-      .filter-grid,
+    @media (max-width: 980px) {
+      .main-grid,
+      .hero-snapshot,
+      .form-grid,
+      .preview-grid,
       .stats-grid,
-      .summary-row,
-      .button-row{
-        grid-template-columns:1fr;
+      .button-row,
+      .export-panel-actions {
+        grid-template-columns: 1fr;
       }
 
-      body{
-        padding:12px;
+      .hero h1 {
+        font-size: 1.58rem;
       }
 
-      .hero h1{
-        font-size:1.55rem;
+      body {
+        padding: 12px;
+      }
+
+      .week-drawer summary {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .week-right {
+        text-align: left;
       }
     }
   </style>
@@ -476,36 +505,104 @@
 <body>
   <div class="app">
     <section class="hero">
-      <h1>Shift Income Dashboard</h1>
-      <p>
-        Track sections, tags, weekly performance, total hourly earnings, and trends without your data looking like it got mugged by a spreadsheet.
-      </p>
+      <div class="hero-top">
+        <div>
+          <h1>Shift Income Dashboard</h1>
+          <p>Track real take-home pay from each shift with a cleaner cabinet-style layout and Friday-to-Thursday weekly drawers.</p>
+        </div>
+      </div>
+      <div class="hero-snapshot">
+        <div class="hero-chip">
+          <div class="hero-chip-label">This Week Take-Home</div>
+          <div class="hero-chip-value" id="heroWeekTakeHome">$0.00</div>
+        </div>
+        <div class="hero-chip">
+          <div class="hero-chip-label">This Week Net Hourly</div>
+          <div class="hero-chip-value" id="heroWeekHourly">$0.00</div>
+        </div>
+        <div class="hero-chip">
+          <div class="hero-chip-label">This Week Shifts</div>
+          <div class="hero-chip-value" id="heroWeekShifts">0</div>
+        </div>
+      </div>
     </section>
 
-    <section class="cabinet-grid">
+    <section class="main-grid">
       <div class="drawer">
-        <div class="drawer-header">
+        <div class="section-header">
           <div>
-            <div class="drawer-title">Shift Entry Drawer</div>
-            <div class="drawer-sub">Add or edit a shift with section, tag, base pay, and tips.</div>
+            <div class="section-title">Shift Entry Drawer</div>
+            <div class="section-subtitle">Add a shift, review the live math, then save it into the weekly stack.</div>
           </div>
         </div>
-        <div class="drawer-body">
-          <div class="input-grid">
+        <div class="section-body">
+          <div class="form-grid">
             <div class="field">
               <label for="date">Date</label>
-              <input type="date" id="date">
+              <input type="date" id="date" />
+            </div>
+
+            <div class="field">
+              <label for="job">Restaurant / Job</label>
+              <input type="text" id="job" placeholder="Texas Roadhouse" />
+            </div>
+
+            <div class="field">
+              <label for="role">Role</label>
+              <select id="role">
+                <option value="">Select role</option>
+                <option value="Server">Server</option>
+                <option value="Bartender">Bartender</option>
+                <option value="Food Runner">Food Runner</option>
+                <option value="Host">Host</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
 
             <div class="field">
               <label for="section">Section</label>
-              <input type="text" id="section" placeholder="Patio, Bar, Main Dining">
+              <input type="text" id="section" placeholder="Patio / Section 2" />
             </div>
 
             <div class="field">
-              <label for="tag">Shift Tag</label>
+              <label for="hours">Hours Worked</label>
+              <input type="number" id="hours" min="0" step="0.01" placeholder="6.5" />
+            </div>
+
+            <div class="field">
+              <label for="cashTips">Cash Tips</label>
+              <input type="number" id="cashTips" min="0" step="0.01" placeholder="40" />
+            </div>
+
+            <div class="field">
+              <label for="creditTips">Credit Tips</label>
+              <input type="number" id="creditTips" min="0" step="0.01" placeholder="145" />
+            </div>
+
+            <div class="field">
+              <label for="sales">Sales</label>
+              <input type="number" id="sales" min="0" step="0.01" placeholder="900" />
+            </div>
+
+            <div class="field">
+              <label for="baseWage">Base Wage Earned</label>
+              <input type="number" id="baseWage" min="0" step="0.01" placeholder="15.60" />
+            </div>
+
+            <div class="field">
+              <label for="tipOut">Tip-Out Amount</label>
+              <input type="number" id="tipOut" min="0" step="0.01" placeholder="20" />
+            </div>
+
+            <div class="field">
+              <label for="otherDeductions">Other Deductions</label>
+              <input type="number" id="otherDeductions" min="0" step="0.01" placeholder="0" />
+            </div>
+
+            <div class="field">
+              <label for="tag">Shift Tag (optional)</label>
               <select id="tag">
-                <option value="">Select shift tag</option>
+                <option value="">No tag</option>
                 <option value="good">Good</option>
                 <option value="bad">Bad</option>
                 <option value="slow">Slow</option>
@@ -516,902 +613,691 @@
                 <option value="hot">Hot</option>
               </select>
             </div>
+          </div>
 
-            <div class="field">
-              <label for="hours">Hours Worked</label>
-              <input type="number" id="hours" step="0.01" min="0" placeholder="6.50">
+          <div class="preview-box">
+            <div class="preview-title">Live Shift Preview</div>
+            <div class="preview-grid">
+              <div class="preview-item">
+                <div class="preview-label">Gross Tips</div>
+                <div class="preview-value" id="previewGrossTips">$0.00</div>
+              </div>
+              <div class="preview-item">
+                <div class="preview-label">Net Tips</div>
+                <div class="preview-value" id="previewNetTips">$0.00</div>
+              </div>
+              <div class="preview-item">
+                <div class="preview-label">Gross Hourly</div>
+                <div class="preview-value" id="previewGrossHourly">$0.00</div>
+              </div>
+              <div class="preview-item">
+                <div class="preview-label">Net Hourly</div>
+                <div class="preview-value" id="previewNetHourly">$0.00</div>
+              </div>
+              <div class="preview-item">
+                <div class="preview-label">Tip % of Sales</div>
+                <div class="preview-value" id="previewTipPercent">0.00%</div>
+              </div>
+              <div class="preview-item">
+                <div class="preview-label">Total Take-Home</div>
+                <div class="preview-value" id="previewTakeHome">$0.00</div>
+              </div>
             </div>
-
-            <div class="field">
-              <label for="tips">Tips Earned</label>
-              <input type="number" id="tips" step="0.01" min="0" placeholder="185.00">
-            </div>
-
-            <div class="field">
-              <label for="basePay">Base Pay</label>
-              <input type="number" id="basePay" step="0.01" min="0" placeholder="0.00">
-            </div>
+            <div class="warnings" id="warnings"></div>
           </div>
 
           <div class="button-row">
-            <button class="primary-btn" id="saveBtn" onclick="handleSubmit()">Save Shift</button>
-            <button class="secondary-btn" onclick="exportCSV()">Export CSV</button>
-            <button class="secondary-btn" onclick="triggerImport()">Import CSV</button>
-            <button class="warning-btn" onclick="resetForm()">Clear Form</button>
+            <button class="btn-primary" id="saveBtn">Add Shift</button>
+            <button class="btn-secondary" id="cancelBtn" type="button">Cancel Edit</button>
+            <button class="btn-secondary" id="clearBtn" type="button">Clear Form</button>
+            <button class="btn-secondary" id="jumpBtn" type="button">Jump to Weekly Drawers</button>
           </div>
 
-          <input type="file" id="csvFileInput" class="hidden" accept=".csv,text/csv" />
+          <div class="mode-note" id="modeNote">Mode: adding a new shift.</div>
         </div>
       </div>
 
       <div class="cabinet">
-        <div class="cabinet-header">
+        <div class="section-header">
           <div>
-            <div class="cabinet-title">Performance Cabinet</div>
-            <div class="cabinet-sub">Headline metrics based on currently visible filtered data.</div>
-            <div class="week-range" id="weekRange">Week: --</div>
+            <div class="section-title">Performance Cabinet</div>
+            <div class="section-subtitle">Headline metrics across all stored shifts.</div>
           </div>
         </div>
-        <div class="cabinet-body">
+        <div class="section-body">
           <div class="stats-grid">
             <div class="stat-card">
-              <div class="stat-label">Total Tips</div>
-              <div class="stat-value" id="totalTips">$0.00</div>
+              <div class="stat-label">Total Gross Tips</div>
+              <div class="stat-value" id="statTotalGrossTips">$0.00</div>
             </div>
-
             <div class="stat-card">
-              <div class="stat-label">Total Base Pay</div>
-              <div class="stat-value" id="totalBase">$0.00</div>
+              <div class="stat-label">Total Net Tips</div>
+              <div class="stat-value" id="statTotalNetTips">$0.00</div>
             </div>
-
+            <div class="stat-card">
+              <div class="stat-label">Total Take-Home</div>
+              <div class="stat-value" id="statTotalTakeHome">$0.00</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Overall Net Hourly</div>
+              <div class="stat-value" id="statOverallNetHourly">$0.00</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Current Week Take-Home</div>
+              <div class="stat-value" id="statCurrentWeekTakeHome">$0.00</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Current Week Net Hourly</div>
+              <div class="stat-value" id="statCurrentWeekNetHourly">$0.00</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Best Shift</div>
+              <div class="stat-value" id="statBestShift">$0.00/hr</div>
+              <div class="stat-meta" id="statBestShiftMeta">No shift yet.</div>
+            </div>
             <div class="stat-card">
               <div class="stat-label">Total Hours</div>
-              <div class="stat-value" id="totalHours">0.00</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-label">Overall Avg / Hr</div>
-              <div class="stat-value" id="overallAvg">$0.00</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-label">Weekly Avg (Fri–Thu)</div>
-              <div class="stat-value" id="weeklyAvg">$0.00</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-label">Weekly Total Earnings</div>
-              <div class="stat-value" id="weeklyTotal">$0.00</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-label">Projected @ 40 Hours</div>
-              <div class="stat-value" id="projection">$0.00</div>
-            </div>
-
-            <div class="stat-card">
-              <div class="stat-label">Visible Shifts</div>
-              <div class="stat-value" id="visibleShifts">0</div>
-            </div>
-
-            <div class="stat-card wide">
-              <div class="stat-label">Best Shift</div>
-              <div class="stat-value" id="bestShift">$0.00 / hr</div>
+              <div class="stat-value" id="statTotalHours">0.00</div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="panel">
-      <div class="panel-header">
-        <div>
-          <div class="panel-title">Filters Drawer</div>
-          <div class="muted-note">Narrow down the ledger and analytics without deleting anything.</div>
-        </div>
-      </div>
-      <div class="panel-body">
-        <div class="filter-grid">
-          <div class="field">
-            <label for="filterSection">Filter by Section</label>
-            <select id="filterSection"></select>
-          </div>
-
-          <div class="field">
-            <label for="filterTag">Filter by Tag</label>
-            <select id="filterTag"></select>
-          </div>
-
-          <div class="field">
-            <label for="filterStart">Start Date</label>
-            <input type="date" id="filterStart">
-          </div>
-
-          <div class="field">
-            <label for="filterEnd">End Date</label>
-            <input type="date" id="filterEnd">
-          </div>
-        </div>
-
-        <div class="button-row" style="margin-top:14px;">
-          <button class="secondary-btn" onclick="applyFilters()">Apply Filters</button>
-          <button class="warning-btn" onclick="clearFilters()">Clear Filters</button>
-          <button class="secondary-btn" onclick="setCurrentWeekFilter()">This Week</button>
-          <button class="danger-btn" onclick="clearAllData()">Delete All Data</button>
-        </div>
-      </div>
-    </section>
-
-    <section class="lower-grid">
+    <section class="stack" id="weeklySection">
       <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Section Performance</div>
+        <div class="section-header">
+          <div>
+            <div class="section-title">Weekly Drawers</div>
+            <div class="section-subtitle">Each cabinet groups shifts from Friday through Thursday.</div>
+          </div>
         </div>
-        <div class="panel-body">
-          <div class="mini-list" id="sectionStats"></div>
+        <div class="section-body">
+          <div class="stack" id="weeklyDrawers"></div>
         </div>
       </div>
 
       <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Day-of-Week Performance</div>
-        </div>
-        <div class="panel-body">
-          <div class="mini-list" id="dayStats"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="lower-grid">
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Tag Analytics</div>
-        </div>
-        <div class="panel-body">
-          <div class="mini-list" id="tagStats"></div>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Weekly History Drawer</div>
-        </div>
-        <div class="panel-body">
-          <div id="weeklyHistory"></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="charts-grid">
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Hourly Earnings by Shift</div>
-        </div>
-        <div class="panel-body">
-          <div class="chart-wrap">
-            <canvas id="hourlyTrendChart"></canvas>
+        <div class="section-header">
+          <div>
+            <div class="section-title">Export Cabinet</div>
+            <div class="section-subtitle">Keep a backup or clear everything if you truly mean it.</div>
           </div>
         </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Section Avg / Hr</div>
-        </div>
-        <div class="panel-body">
-          <div class="chart-wrap">
-            <canvas id="sectionChart"></canvas>
+        <div class="section-body">
+          <div class="export-panel-actions">
+            <button class="btn-secondary" id="exportBtn" type="button">Export CSV</button>
+            <button class="btn-danger" id="clearAllBtn" type="button">Clear All Data</button>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-header">
-        <div>
-          <div class="panel-title">Shift Ledger</div>
-          <div class="muted-note">Stored locally in your browser. Filters affect what you see, not what is saved.</div>
-        </div>
-      </div>
-      <div class="panel-body">
-        <div class="summary-row">
-          <div class="summary-chip">
-            <div class="label">Current Filter</div>
-            <div class="value" id="filterSummary">All shifts</div>
-          </div>
-          <div class="summary-chip">
-            <div class="label">Visible Earnings</div>
-            <div class="value" id="visibleEarnings">$0.00</div>
-          </div>
-          <div class="summary-chip">
-            <div class="label">Visible Avg / Hr</div>
-            <div class="value" id="visibleAvgHourly">$0.00</div>
-          </div>
-        </div>
-
-        <div class="table-shell" style="margin-top:14px;">
-          <table id="shiftTable">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Section</th>
-                <th>Hours</th>
-                <th>Tips</th>
-                <th>Base Pay</th>
-                <th>Total Earnings</th>
-                <th>$ / Hr</th>
-                <th>Tag</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <div class="small-note">Data is stored locally in your browser under a dedicated key. Clearing browser storage can erase it, so export occasionally unless you enjoy courting chaos.</div>
         </div>
       </div>
     </section>
   </div>
 
   <script>
-    const STORAGE_KEY = "shiftDataV2";
-    const DAY_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-    let shifts = loadData();
-    let filteredShifts = [...shifts];
-    let editIndex = null;
-    let hourlyTrendChart = null;
-    let sectionChart = null;
+    const STORAGE_KEY = "shiftDashboardDataV1";
+    let shifts = loadShifts();
+    let editingId = null;
 
-    function loadData(){
-      const raw = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-      return raw.map(normalizeShift).filter(Boolean).sort(sortByDateAsc);
+    const fieldIds = [
+      "date",
+      "job",
+      "role",
+      "section",
+      "hours",
+      "cashTips",
+      "creditTips",
+      "sales",
+      "baseWage",
+      "tipOut",
+      "otherDeductions",
+      "tag"
+    ];
+
+    const elements = {
+      saveBtn: document.getElementById("saveBtn"),
+      cancelBtn: document.getElementById("cancelBtn"),
+      clearBtn: document.getElementById("clearBtn"),
+      jumpBtn: document.getElementById("jumpBtn"),
+      exportBtn: document.getElementById("exportBtn"),
+      clearAllBtn: document.getElementById("clearAllBtn"),
+      modeNote: document.getElementById("modeNote"),
+      warnings: document.getElementById("warnings"),
+      weeklyDrawers: document.getElementById("weeklyDrawers"),
+      weeklySection: document.getElementById("weeklySection")
+    };
+
+    function loadShifts() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed.filter(isValidShiftShape) : [];
+      } catch {
+        return [];
+      }
     }
 
-    function saveData(){
+    function isValidShiftShape(item) {
+      return item && typeof item === "object" && typeof item.id === "string" && typeof item.date === "string";
+    }
+
+    function saveShifts() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(shifts));
     }
 
-    function sortByDateAsc(a, b){
-      return new Date(a.date) - new Date(b.date);
+    function safeNum(value) {
+      const num = Number(value);
+      return Number.isFinite(num) ? num : 0;
     }
 
-    function formatCurrency(value){
-      return `$${Number(value || 0).toFixed(2)}`;
+    function formatCurrency(value) {
+      return `$${safeNum(value).toFixed(2)}`;
     }
 
-    function formatNumber(value){
-      return Number(value || 0).toFixed(2);
+    function formatPercent(value) {
+      return `${safeNum(value).toFixed(2)}%`;
     }
 
-    function escapeHtml(str){
-      return String(str ?? "")
+    function escapeHtml(value) {
+      return String(value ?? "")
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
+        .replace(/\"/g, "&quot;")
         .replace(/'/g, "&#039;");
     }
 
-    function csvSafe(value){
+    function csvSafe(value) {
       return `"${String(value ?? "").replace(/"/g, '""')}"`;
     }
 
-    function normalizeSectionName(section){
-      const cleaned = String(section || "").trim().replace(/\s+/g, " ");
-      if(!cleaned) return "";
-      return cleaned
-        .split(" ")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(" ");
+    function generateId() {
+      return `shift_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     }
 
-    function calculateHourly(totalEarnings, hours){
-      return hours > 0 ? totalEarnings / hours : 0;
+    function getFieldValue(id) {
+      return document.getElementById(id).value;
     }
 
-    function normalizeShift(shift){
-      if(!shift) return null;
+    function setFieldValue(id, value) {
+      document.getElementById(id).value = value ?? "";
+    }
 
-      const date = String(shift.date || "").trim();
-      const section = normalizeSectionName(shift.section);
-      const tag = String(shift.tag || "").trim().toLowerCase();
-      const hours = Number(shift.hours || 0);
-      const tips = Number(shift.tips || 0);
-      const basePay = Number(shift.basePay || 0);
-
-      if(!date || !section || !tag || !Number.isFinite(hours) || !Number.isFinite(tips) || !Number.isFinite(basePay) || hours <= 0 || tips < 0 || basePay < 0){
-        return null;
-      }
-
-      const totalEarnings = tips + basePay;
-      const hourly = calculateHourly(totalEarnings, hours);
-
+    function getFormData() {
       return {
-        date,
-        section,
-        hours,
-        tips,
-        basePay,
-        totalEarnings,
-        hourly,
-        tag
+        date: getFieldValue("date"),
+        job: getFieldValue("job").trim(),
+        role: getFieldValue("role"),
+        section: getFieldValue("section").trim(),
+        hours: safeNum(getFieldValue("hours")),
+        cashTips: safeNum(getFieldValue("cashTips")),
+        creditTips: safeNum(getFieldValue("creditTips")),
+        sales: safeNum(getFieldValue("sales")),
+        baseWage: safeNum(getFieldValue("baseWage")),
+        tipOut: safeNum(getFieldValue("tipOut")),
+        otherDeductions: safeNum(getFieldValue("otherDeductions")),
+        tag: getFieldValue("tag")
       };
     }
 
-    function getFormData(){
-      return normalizeShift({
-        date: document.getElementById("date").value,
-        section: document.getElementById("section").value,
-        hours: document.getElementById("hours").value,
-        tips: document.getElementById("tips").value,
-        basePay: document.getElementById("basePay").value || 0,
-        tag: document.getElementById("tag").value
-      });
+    function calculateDerived(data) {
+      const grossTips = data.cashTips + data.creditTips;
+      const netTips = grossTips - data.tipOut - data.otherDeductions;
+      const totalTakeHome = netTips + data.baseWage;
+      const grossHourly = data.hours > 0 ? grossTips / data.hours : 0;
+      const netHourly = data.hours > 0 ? totalTakeHome / data.hours : 0;
+      const tipPercentOfSales = data.sales > 0 ? (grossTips / data.sales) * 100 : 0;
+
+      return {
+        grossTips,
+        netTips,
+        totalTakeHome,
+        grossHourly,
+        netHourly,
+        tipPercentOfSales
+      };
     }
 
-    function resetForm(){
-      ["date","section","hours","tips","basePay","tag"].forEach(id => {
-        document.getElementById(id).value = "";
+    function validateForm(data) {
+      const errors = [];
+
+      if (!data.date) errors.push("Date is required.");
+      if (!data.job) errors.push("Restaurant / Job is required.");
+      if (!data.role) errors.push("Role is required.");
+      if (!data.section) errors.push("Section is required.");
+      if (!(data.hours > 0)) errors.push("Hours worked must be greater than 0.");
+
+      const numericFields = [
+        ["Cash tips", data.cashTips],
+        ["Credit tips", data.creditTips],
+        ["Sales", data.sales],
+        ["Base wage", data.baseWage],
+        ["Tip-out", data.tipOut],
+        ["Other deductions", data.otherDeductions]
+      ];
+
+      numericFields.forEach(([label, value]) => {
+        if (value < 0) errors.push(`${label} cannot be negative.`);
       });
-      editIndex = null;
-      document.getElementById("saveBtn").textContent = "Save Shift";
+
+      return errors;
     }
 
-    function handleSubmit(){
-      const shift = getFormData();
+    function getWarnings(data, derived) {
+      const warnings = [];
 
-      if(!shift){
-        alert("Please fill out date, section, tag, hours, and earnings correctly.");
+      if (data.sales === 0 && derived.grossTips > 0) {
+        warnings.push({ type: "warning", text: "Sales are $0 while tips are above $0. That may be fine, but double-check the entry." });
+      }
+
+      if (derived.netTips < 0) {
+        warnings.push({ type: "danger", text: "Net tips are negative. The shift will still save, but the math looks suspicious." });
+      }
+
+      if (data.tipOut > derived.grossTips && derived.grossTips > 0) {
+        warnings.push({ type: "warning", text: "Tip-out is greater than gross tips. Either the shift was cursed or one of the numbers is off." });
+      }
+
+      if (data.baseWage > 0 && data.hours > 0 && (data.baseWage / data.hours) > 30) {
+        warnings.push({ type: "warning", text: "Base wage per hour looks unusually high. Check whether you entered total shift wage or hourly wage by accident." });
+      }
+
+      return warnings;
+    }
+
+    function refreshPreview() {
+      const data = getFormData();
+      const derived = calculateDerived(data);
+      const warnings = getWarnings(data, derived);
+
+      document.getElementById("previewGrossTips").textContent = formatCurrency(derived.grossTips);
+      document.getElementById("previewNetTips").textContent = formatCurrency(derived.netTips);
+      document.getElementById("previewGrossHourly").textContent = formatCurrency(derived.grossHourly);
+      document.getElementById("previewNetHourly").textContent = formatCurrency(derived.netHourly);
+      document.getElementById("previewTipPercent").textContent = formatPercent(derived.tipPercentOfSales);
+      document.getElementById("previewTakeHome").textContent = formatCurrency(derived.totalTakeHome);
+
+      elements.warnings.innerHTML = warnings
+        .map(item => `<div class="warning-item ${item.type}">${escapeHtml(item.text)}</div>`)
+        .join("");
+    }
+
+    function sortShifts() {
+      shifts.sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+
+    function updateModeNote() {
+      if (editingId === null) {
+        elements.saveBtn.textContent = "Add Shift";
+        elements.modeNote.textContent = "Mode: adding a new shift.";
+      } else {
+        const shift = shifts.find(item => item.id === editingId);
+        elements.saveBtn.textContent = "Update Shift";
+        elements.modeNote.textContent = shift
+          ? `Mode: editing shift from ${shift.date}.`
+          : "Mode: editing a shift.";
+      }
+    }
+
+    function clearForm() {
+      fieldIds.forEach(id => setFieldValue(id, ""));
+      refreshPreview();
+    }
+
+    function cancelEdit(clear = true) {
+      editingId = null;
+      if (clear) clearForm();
+      updateModeNote();
+    }
+
+    function handleSave() {
+      const form = getFormData();
+      const errors = validateForm(form);
+
+      if (errors.length) {
+        alert(errors.join("\n"));
         return;
       }
 
-      if(editIndex === null){
-        shifts.push(shift);
+      const derived = calculateDerived(form);
+      const now = new Date().toISOString();
+
+      if (editingId === null) {
+        shifts.push({
+          id: generateId(),
+          createdAt: now,
+          updatedAt: now,
+          ...form,
+          ...derived
+        });
       } else {
-        shifts[editIndex] = shift;
-        editIndex = null;
+        const index = shifts.findIndex(item => item.id === editingId);
+        if (index === -1) {
+          alert("That shift could not be found for editing.");
+          cancelEdit();
+          return;
+        }
+
+        shifts[index] = {
+          ...shifts[index],
+          ...form,
+          ...derived,
+          updatedAt: now
+        };
       }
 
-      shifts.sort(sortByDateAsc);
-      saveData();
-      resetForm();
-      refreshAll();
+      sortShifts();
+      saveShifts();
+      cancelEdit();
+      renderAll();
     }
 
-    function editShift(index){
-      const shift = shifts[index];
-      if(!shift) return;
+    function startEdit(id) {
+      const shift = shifts.find(item => item.id === id);
+      if (!shift) return;
 
-      document.getElementById("date").value = shift.date;
-      document.getElementById("section").value = shift.section;
-      document.getElementById("hours").value = shift.hours;
-      document.getElementById("tips").value = shift.tips;
-      document.getElementById("basePay").value = shift.basePay;
-      document.getElementById("tag").value = shift.tag;
-
-      editIndex = index;
-      document.getElementById("saveBtn").textContent = "Update Shift";
+      editingId = id;
+      setFieldValue("date", shift.date);
+      setFieldValue("job", shift.job);
+      setFieldValue("role", shift.role);
+      setFieldValue("section", shift.section);
+      setFieldValue("hours", shift.hours);
+      setFieldValue("cashTips", shift.cashTips);
+      setFieldValue("creditTips", shift.creditTips);
+      setFieldValue("sales", shift.sales);
+      setFieldValue("baseWage", shift.baseWage);
+      setFieldValue("tipOut", shift.tipOut);
+      setFieldValue("otherDeductions", shift.otherDeductions);
+      setFieldValue("tag", shift.tag);
+      updateModeNote();
+      refreshPreview();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    function deleteShift(index){
-      shifts.splice(index, 1);
-      if(editIndex === index){
-        resetForm();
-      } else if(editIndex !== null && index < editIndex){
-        editIndex--;
+    function deleteShift(id) {
+      const shift = shifts.find(item => item.id === id);
+      if (!shift) return;
+
+      const confirmed = confirm(`Delete the shift from ${shift.date} (${shift.section})?`);
+      if (!confirmed) return;
+
+      shifts = shifts.filter(item => item.id !== id);
+      saveShifts();
+
+      if (editingId === id) {
+        cancelEdit();
       }
-      saveData();
-      refreshAll();
+
+      renderAll();
     }
 
-    function clearAllData(){
-      if(!confirm("Delete all saved shift data?")){
-        return;
-      }
-      shifts = [];
-      filteredShifts = [];
-      editIndex = null;
-      saveData();
-      resetForm();
-      refreshAll();
+    function getWeekStart(dateString) {
+      const date = new Date(`${dateString}T00:00:00`);
+      const day = date.getDay();
+      const diff = day >= 5 ? day - 5 : day + 2;
+      date.setDate(date.getDate() - diff);
+      return date.toISOString().split("T")[0];
     }
 
-    function getFridayWeekRange(baseDate = new Date()){
-      const d = new Date(baseDate);
-      d.setHours(0,0,0,0);
-      const day = d.getDay();
-      const diffToFriday = day >= 5 ? day - 5 : day + 2;
-
-      const start = new Date(d);
-      start.setDate(d.getDate() - diffToFriday);
-
-      const end = new Date(start);
-      end.setDate(start.getDate() + 6);
-
-      return { start, end };
+    function getWeekEnd(weekStart) {
+      const date = new Date(`${weekStart}T00:00:00`);
+      date.setDate(date.getDate() + 6);
+      return date.toISOString().split("T")[0];
     }
 
-    function toDateStringLocal(date){
-      const y = date.getFullYear();
-      const m = String(date.getMonth() + 1).padStart(2, "0");
-      const d = String(date.getDate()).padStart(2, "0");
-      return `${y}-${m}-${d}`;
+    function formatWeekRange(start, end) {
+      const startDate = new Date(`${start}T00:00:00`);
+      const endDate = new Date(`${end}T00:00:00`);
+      const monthFormat = { month: "short", day: "numeric" };
+      return `${startDate.toLocaleDateString(undefined, monthFormat)} – ${endDate.toLocaleDateString(undefined, monthFormat)}`;
     }
 
-    function formatShortDate(date){
-      return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-    }
-
-    function getWeekStartString(dateString){
-      const d = new Date(dateString + "T00:00:00");
-      const day = d.getDay();
-      const diffToFriday = day >= 5 ? day - 5 : day + 2;
-      d.setDate(d.getDate() - diffToFriday);
-      return toDateStringLocal(d);
-    }
-
-    function aggregateTotals(data){
-      return data.reduce((acc, s) => {
-        acc.hours += s.hours;
-        acc.tips += s.tips;
-        acc.basePay += s.basePay;
-        acc.totalEarnings += s.totalEarnings;
-        return acc;
-      }, { hours:0, tips:0, basePay:0, totalEarnings:0 });
-    }
-
-    function withHourly(totals){
-      return {
-        ...totals,
-        avgHourly: calculateHourly(totals.totalEarnings, totals.hours)
-      };
-    }
-
-    function groupBy(data, keyFn){
-      return data.reduce((acc, item) => {
-        const key = keyFn(item);
-        if(!acc[key]) acc[key] = [];
-        acc[key].push(item);
+    function groupByWeek(items) {
+      return items.reduce((acc, item) => {
+        const weekStart = getWeekStart(item.date);
+        if (!acc[weekStart]) acc[weekStart] = [];
+        acc[weekStart].push(item);
         return acc;
       }, {});
     }
 
-    function buildSelectOptions(selectId, values, defaultLabel){
-      const select = document.getElementById(selectId);
-      const currentValue = select.value;
-      const uniqueValues = [...new Set(values)].sort((a,b) => String(a).localeCompare(String(b)));
-      select.innerHTML = `<option value="">${defaultLabel}</option>` +
-        uniqueValues.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
-      if(uniqueValues.includes(currentValue)){
-        select.value = currentValue;
-      }
-    }
+    function renderHeroAndStats() {
+      const totalGrossTips = shifts.reduce((sum, item) => sum + item.grossTips, 0);
+      const totalNetTips = shifts.reduce((sum, item) => sum + item.netTips, 0);
+      const totalTakeHome = shifts.reduce((sum, item) => sum + item.totalTakeHome, 0);
+      const totalHours = shifts.reduce((sum, item) => sum + item.hours, 0);
+      const overallNetHourly = totalHours > 0 ? totalTakeHome / totalHours : 0;
 
-    function populateFilterOptions(){
-      buildSelectOptions("filterSection", shifts.map(s => s.section), "All sections");
-      buildSelectOptions("filterTag", shifts.map(s => s.tag), "All tags");
-    }
+      const latestShift = shifts[shifts.length - 1] || null;
+      const currentWeekStart = latestShift ? getWeekStart(latestShift.date) : null;
+      const currentWeekShifts = currentWeekStart ? shifts.filter(item => getWeekStart(item.date) === currentWeekStart) : [];
+      const currentWeekTakeHome = currentWeekShifts.reduce((sum, item) => sum + item.totalTakeHome, 0);
+      const currentWeekHours = currentWeekShifts.reduce((sum, item) => sum + item.hours, 0);
+      const currentWeekNetHourly = currentWeekHours > 0 ? currentWeekTakeHome / currentWeekHours : 0;
 
-    function getFilters(){
-      return {
-        section: document.getElementById("filterSection").value,
-        tag: document.getElementById("filterTag").value,
-        start: document.getElementById("filterStart").value,
-        end: document.getElementById("filterEnd").value
-      };
-    }
+      document.getElementById("heroWeekTakeHome").textContent = formatCurrency(currentWeekTakeHome);
+      document.getElementById("heroWeekHourly").textContent = formatCurrency(currentWeekNetHourly);
+      document.getElementById("heroWeekShifts").textContent = String(currentWeekShifts.length);
 
-    function applyFilters(){
-      const { section, tag, start, end } = getFilters();
+      document.getElementById("statTotalGrossTips").textContent = formatCurrency(totalGrossTips);
+      document.getElementById("statTotalNetTips").textContent = formatCurrency(totalNetTips);
+      document.getElementById("statTotalTakeHome").textContent = formatCurrency(totalTakeHome);
+      document.getElementById("statOverallNetHourly").textContent = formatCurrency(overallNetHourly);
+      document.getElementById("statCurrentWeekTakeHome").textContent = formatCurrency(currentWeekTakeHome);
+      document.getElementById("statCurrentWeekNetHourly").textContent = formatCurrency(currentWeekNetHourly);
+      document.getElementById("statTotalHours").textContent = totalHours.toFixed(2);
 
-      filteredShifts = shifts.filter(s => {
-        const matchSection = !section || s.section === section;
-        const matchTag = !tag || s.tag === tag;
-        const matchStart = !start || s.date >= start;
-        const matchEnd = !end || s.date <= end;
-        return matchSection && matchTag && matchStart && matchEnd;
-      });
-
-      renderAll();
-    }
-
-    function clearFilters(){
-      document.getElementById("filterSection").value = "";
-      document.getElementById("filterTag").value = "";
-      document.getElementById("filterStart").value = "";
-      document.getElementById("filterEnd").value = "";
-      filteredShifts = [...shifts];
-      renderAll();
-    }
-
-    function setCurrentWeekFilter(){
-      const { start, end } = getFridayWeekRange(new Date());
-      document.getElementById("filterStart").value = toDateStringLocal(start);
-      document.getElementById("filterEnd").value = toDateStringLocal(end);
-      applyFilters();
-    }
-
-    function getCurrentWeekStats(allData){
-      const { start, end } = getFridayWeekRange(new Date());
-      const startStr = toDateStringLocal(start);
-      const endStr = toDateStringLocal(end);
-      const weekShifts = allData.filter(s => s.date >= startStr && s.date <= endStr);
-      return {
-        ...withHourly(aggregateTotals(weekShifts)),
-        start,
-        end
-      };
-    }
-
-    function updateHeaderStats(){
-      const totals = withHourly(aggregateTotals(filteredShifts));
-      const weekly = getCurrentWeekStats(shifts);
-      const best = filteredShifts.length
-        ? filteredShifts.reduce((bestSoFar, s) => s.hourly > bestSoFar.hourly ? s : bestSoFar, filteredShifts[0])
-        : null;
-
-      document.getElementById("totalTips").textContent = formatCurrency(totals.tips);
-      document.getElementById("totalBase").textContent = formatCurrency(totals.basePay);
-      document.getElementById("totalHours").textContent = formatNumber(totals.hours);
-      document.getElementById("overallAvg").textContent = formatCurrency(totals.avgHourly);
-      document.getElementById("weeklyAvg").textContent = formatCurrency(weekly.avgHourly);
-      document.getElementById("weeklyTotal").textContent = formatCurrency(weekly.totalEarnings);
-      document.getElementById("projection").textContent = formatCurrency(weekly.avgHourly * 40);
-      document.getElementById("visibleShifts").textContent = String(filteredShifts.length);
-      document.getElementById("weekRange").textContent = `Week: ${formatShortDate(weekly.start)} – ${formatShortDate(weekly.end)}`;
-      document.getElementById("bestShift").textContent = best
-        ? `${formatCurrency(best.hourly)} / hr · ${best.date} · ${best.section}`
-        : "$0.00 / hr";
-    }
-
-    function updateFilterSummary(){
-      const filters = getFilters();
-      const chunks = [];
-      if(filters.section) chunks.push(`Section: ${filters.section}`);
-      if(filters.tag) chunks.push(`Tag: ${filters.tag}`);
-      if(filters.start) chunks.push(`From: ${filters.start}`);
-      if(filters.end) chunks.push(`To: ${filters.end}`);
-
-      const totals = withHourly(aggregateTotals(filteredShifts));
-
-      document.getElementById("filterSummary").textContent = chunks.length ? chunks.join(" · ") : "All shifts";
-      document.getElementById("visibleEarnings").textContent = formatCurrency(totals.totalEarnings);
-      document.getElementById("visibleAvgHourly").textContent = formatCurrency(totals.avgHourly);
-    }
-
-    function renderMiniStatList(containerId, items, emptyText, formatter){
-      const container = document.getElementById(containerId);
-      container.innerHTML = "";
-
-      if(!items.length){
-        container.innerHTML = `<div class="empty-state">${escapeHtml(emptyText)}</div>`;
+      if (shifts.length === 0) {
+        document.getElementById("statBestShift").textContent = "$0.00/hr";
+        document.getElementById("statBestShiftMeta").textContent = "No shift yet.";
         return;
       }
 
-      items.forEach(item => {
-        const div = document.createElement("div");
-        div.className = "mini-item";
-        div.innerHTML = `
-          <div class="name">${escapeHtml(item.name)}</div>
-          <div class="value">${formatter(item)}</div>
-        `;
-        container.appendChild(div);
-      });
+      const bestShift = shifts.reduce((best, item) => item.netHourly > best.netHourly ? item : best, shifts[0]);
+      document.getElementById("statBestShift").textContent = `${formatCurrency(bestShift.netHourly)}/hr`;
+      document.getElementById("statBestShiftMeta").textContent = `${bestShift.date} • ${bestShift.section}`;
     }
 
-    function buildAverageListFromGroups(groups, sortFn){
-      return Object.entries(groups)
-        .map(([name, items]) => {
-          const totals = withHourly(aggregateTotals(items));
-          return { name, ...totals, shifts: items.length };
-        })
-        .sort(sortFn);
-    }
-
-    function renderSectionStats(){
-      const grouped = groupBy(filteredShifts, s => s.section);
-      const items = buildAverageListFromGroups(grouped, (a,b) => b.avgHourly - a.avgHourly);
-      renderMiniStatList("sectionStats", items, "No section data yet.", item => `${formatCurrency(item.avgHourly)} / hr`);
-    }
-
-    function renderDayStats(){
-      const grouped = groupBy(filteredShifts, s => DAY_NAMES[new Date(s.date + "T00:00:00").getDay()]);
-      const items = buildAverageListFromGroups(grouped, (a,b) => DAY_NAMES.indexOf(a.name) - DAY_NAMES.indexOf(b.name));
-      renderMiniStatList("dayStats", items, "No day-of-week data yet.", item => `${formatCurrency(item.avgHourly)} / hr`);
-    }
-
-    function renderTagStats(){
-      const grouped = groupBy(filteredShifts, s => s.tag);
-      const items = buildAverageListFromGroups(grouped, (a,b) => b.avgHourly - a.avgHourly);
-      renderMiniStatList("tagStats", items, "No tag data yet.", item => `${formatCurrency(item.avgHourly)} / hr`);
-    }
-
-    function renderWeeklyHistory(){
-      const container = document.getElementById("weeklyHistory");
-      container.innerHTML = "";
-
-      if(!shifts.length){
-        container.innerHTML = `<div class="empty-state">No weekly history yet.</div>`;
+    function renderWeeklyDrawers() {
+      if (shifts.length === 0) {
+        elements.weeklyDrawers.innerHTML = `<div class="empty-state">No shifts saved yet. Add one above and the weekly drawers will appear here.</div>`;
         return;
       }
 
-      const weeks = groupBy(shifts, s => getWeekStartString(s.date));
-      const weekKeys = Object.keys(weeks).sort((a,b) => new Date(b) - new Date(a));
+      const grouped = groupByWeek(shifts);
+      const weekStarts = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
 
-      weekKeys.forEach(weekStart => {
-        const weekItems = weeks[weekStart].sort(sortByDateAsc);
-        const startDate = new Date(weekStart + "T00:00:00");
-        const endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + 6);
-        const totals = withHourly(aggregateTotals(weekItems));
+      elements.weeklyDrawers.innerHTML = weekStarts.map((weekStart, index) => {
+        const weekEnd = getWeekEnd(weekStart);
+        const items = grouped[weekStart].slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+        const weekTakeHome = items.reduce((sum, item) => sum + item.totalTakeHome, 0);
+        const weekHours = items.reduce((sum, item) => sum + item.hours, 0);
+        const weekNetHourly = weekHours > 0 ? weekTakeHome / weekHours : 0;
+        const weekLabel = formatWeekRange(weekStart, weekEnd);
 
-        const detail = document.createElement("details");
-        detail.className = "week-card";
+        const rows = items.map(item => `
+          <tr>
+            <td>${escapeHtml(item.date)}</td>
+            <td>${escapeHtml(item.job)}</td>
+            <td>${escapeHtml(item.role)}</td>
+            <td>${escapeHtml(item.section)}</td>
+            <td>${item.hours.toFixed(2)}</td>
+            <td>${formatCurrency(item.grossTips)}</td>
+            <td>${formatCurrency(item.tipOut)}</td>
+            <td>${formatCurrency(item.netTips)}</td>
+            <td>${formatCurrency(item.baseWage)}</td>
+            <td>${formatCurrency(item.totalTakeHome)}</td>
+            <td>${formatCurrency(item.netHourly)}</td>
+            <td>${item.tag ? `<span class="tag-pill">${escapeHtml(item.tag)}</span>` : `<span class="empty-state">—</span>`}</td>
+            <td>
+              <div class="action-row">
+                <button class="btn-secondary small-btn" type="button" onclick="startEditById('${escapeHtml(item.id)}')">Edit</button>
+                <button class="btn-danger small-btn" type="button" onclick="deleteShiftById('${escapeHtml(item.id)}')">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `).join("");
 
-        detail.innerHTML = `
-          <summary>
-            <span>${formatShortDate(startDate)} – ${formatShortDate(endDate)} · ${weekItems.length} shift${weekItems.length === 1 ? "" : "s"}</span>
-            <span class="week-meta">${formatCurrency(totals.avgHourly)} / hr</span>
-          </summary>
-          <div class="week-body">
-            <div class="summary-row">
-              <div class="summary-chip">
-                <div class="label">Tips</div>
-                <div class="value">${formatCurrency(totals.tips)}</div>
+        return `
+          <details class="week-drawer" ${index === 0 ? "open" : ""}>
+            <summary>
+              <div class="week-left">
+                <div class="week-title">${weekLabel}</div>
+                <div class="week-meta">${items.length} shift${items.length === 1 ? "" : "s"} • Friday to Thursday</div>
               </div>
-              <div class="summary-chip">
-                <div class="label">Base Pay</div>
-                <div class="value">${formatCurrency(totals.basePay)}</div>
+              <div class="week-right">
+                <div>${formatCurrency(weekTakeHome)} take-home</div>
+                <div>${formatCurrency(weekNetHourly)}/hr</div>
               </div>
-              <div class="summary-chip">
-                <div class="label">Total Earnings</div>
-                <div class="value">${formatCurrency(totals.totalEarnings)}</div>
-              </div>
+            </summary>
+            <div class="table-shell">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Job</th>
+                    <th>Role</th>
+                    <th>Section</th>
+                    <th>Hours</th>
+                    <th>Gross Tips</th>
+                    <th>Tip-Out</th>
+                    <th>Net Tips</th>
+                    <th>Wage</th>
+                    <th>Take-Home</th>
+                    <th>Net Hourly</th>
+                    <th>Tag</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+              </table>
             </div>
-            <div style="margin-top:12px;" class="muted-note">
-              ${weekItems.map(s => `${s.date} · ${escapeHtml(s.section)} · ${formatCurrency(s.hourly)}/hr · ${escapeHtml(s.tag)}`).join("<br>")}
-            </div>
-          </div>
+          </details>
         `;
-        container.appendChild(detail);
-      });
+      }).join("");
     }
 
-    function renderTable(){
-      const tbody = document.querySelector("#shiftTable tbody");
-      tbody.innerHTML = "";
-
-      if(!filteredShifts.length){
-        tbody.innerHTML = `<tr><td colspan="9" class="muted-note">No shifts match the current filters.</td></tr>`;
+    function exportCSV() {
+      if (shifts.length === 0) {
+        alert("There is no data to export yet.");
         return;
       }
 
-      filteredShifts.forEach(shift => {
-        const realIndex = shifts.findIndex(s =>
-          s.date === shift.date &&
-          s.section === shift.section &&
-          s.hours === shift.hours &&
-          s.tips === shift.tips &&
-          s.basePay === shift.basePay &&
-          s.tag === shift.tag
-        );
+      const header = [
+        "ID",
+        "Date",
+        "Job",
+        "Role",
+        "Section",
+        "Hours",
+        "Cash Tips",
+        "Credit Tips",
+        "Gross Tips",
+        "Sales",
+        "Tip-Out",
+        "Other Deductions",
+        "Net Tips",
+        "Base Wage",
+        "Total Take-Home",
+        "Gross Hourly",
+        "Net Hourly",
+        "Tip Percent Of Sales",
+        "Tag",
+        "Created At",
+        "Updated At"
+      ].join(",");
 
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${shift.date}</td>
-          <td>${escapeHtml(shift.section)}</td>
-          <td>${formatNumber(shift.hours)}</td>
-          <td>${formatCurrency(shift.tips)}</td>
-          <td>${formatCurrency(shift.basePay)}</td>
-          <td>${formatCurrency(shift.totalEarnings)}</td>
-          <td>${formatCurrency(shift.hourly)}</td>
-          <td><span class="tag-pill">${escapeHtml(shift.tag)}</span></td>
-          <td class="action-cell">
-            <button class="table-btn edit-btn" onclick="editShift(${realIndex})">Edit</button>
-            <button class="table-btn delete-btn" onclick="deleteShift(${realIndex})">Delete</button>
-          </td>
-        `;
-        tbody.appendChild(row);
-      });
-    }
-
-    function getChartOptions(){
-      return {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            labels: { color: "#dcebea" }
-          }
-        },
-        scales: {
-          x: {
-            ticks: { color: "#9bb8b6" },
-            grid: { color: "rgba(255,255,255,.05)" }
-          },
-          y: {
-            beginAtZero: true,
-            ticks: {
-              color: "#9bb8b6",
-              callback: value => "$" + value
-            },
-            grid: { color: "rgba(255,255,255,.05)" }
-          }
-        }
-      };
-    }
-
-    function renderHourlyTrendChart(){
-      const ctx = document.getElementById("hourlyTrendChart").getContext("2d");
-      if(hourlyTrendChart) hourlyTrendChart.destroy();
-
-      hourlyTrendChart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: filteredShifts.map(s => s.date),
-          datasets: [{
-            label: "Hourly Earnings",
-            data: filteredShifts.map(s => Number(s.hourly.toFixed(2))),
-            borderColor: "#25dbc8",
-            backgroundColor: "rgba(37, 219, 200, 0.18)",
-            fill: true,
-            tension: 0.28,
-            borderWidth: 2,
-            pointRadius: 3,
-            pointHoverRadius: 5
-          }]
-        },
-        options: getChartOptions()
-      });
-    }
-
-    function renderSectionChart(){
-      const ctx = document.getElementById("sectionChart").getContext("2d");
-      if(sectionChart) sectionChart.destroy();
-
-      const grouped = groupBy(filteredShifts, s => s.section);
-      const items = buildAverageListFromGroups(grouped, (a,b) => b.avgHourly - a.avgHourly);
-
-      sectionChart = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: items.map(i => i.name),
-          datasets: [{
-            label: "Section Avg / Hr",
-            data: items.map(i => Number(i.avgHourly.toFixed(2))),
-            backgroundColor: "rgba(37, 219, 200, 0.55)",
-            borderColor: "#25dbc8",
-            borderWidth: 1.5,
-            borderRadius: 8
-          }]
-        },
-        options: getChartOptions()
-      });
-    }
-
-    function renderCharts(){
-      renderHourlyTrendChart();
-      renderSectionChart();
-    }
-
-    function exportCSV(){
-      const header = ["Date","Section","Hours","Tips","BasePay","TotalEarnings","Hourly","Tag"].join(",") + "\n";
-      const rows = shifts.map(s => [
-        csvSafe(s.date),
-        csvSafe(s.section),
-        csvSafe(s.hours),
-        csvSafe(s.tips),
-        csvSafe(s.basePay),
-        csvSafe(s.totalEarnings),
-        csvSafe(Number(s.hourly).toFixed(2)),
-        csvSafe(s.tag)
+      const rows = shifts.map(item => [
+        csvSafe(item.id),
+        csvSafe(item.date),
+        csvSafe(item.job),
+        csvSafe(item.role),
+        csvSafe(item.section),
+        csvSafe(item.hours.toFixed(2)),
+        csvSafe(item.cashTips.toFixed(2)),
+        csvSafe(item.creditTips.toFixed(2)),
+        csvSafe(item.grossTips.toFixed(2)),
+        csvSafe(item.sales.toFixed(2)),
+        csvSafe(item.tipOut.toFixed(2)),
+        csvSafe(item.otherDeductions.toFixed(2)),
+        csvSafe(item.netTips.toFixed(2)),
+        csvSafe(item.baseWage.toFixed(2)),
+        csvSafe(item.totalTakeHome.toFixed(2)),
+        csvSafe(item.grossHourly.toFixed(2)),
+        csvSafe(item.netHourly.toFixed(2)),
+        csvSafe(item.tipPercentOfSales.toFixed(2)),
+        csvSafe(item.tag),
+        csvSafe(item.createdAt),
+        csvSafe(item.updatedAt)
       ].join(","));
 
-      const csv = header + rows.join("\n");
+      const csv = `${header}\n${rows.join("\n")}`;
       const blob = new Blob([csv], { type: "text/csv" });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "shift-data.csv";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "shift-dashboard-export.csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       URL.revokeObjectURL(url);
     }
 
-    function triggerImport(){
-      document.getElementById("csvFileInput").click();
-    }
-
-    function parseCSVLine(line){
-      const result = [];
-      let current = "";
-      let inQuotes = false;
-
-      for(let i = 0; i < line.length; i++){
-        const char = line[i];
-        const next = line[i + 1];
-
-        if(char === '"' && inQuotes && next === '"'){
-          current += '"';
-          i++;
-        } else if(char === '"'){
-          inQuotes = !inQuotes;
-        } else if(char === "," && !inQuotes){
-          result.push(current);
-          current = "";
-        } else {
-          current += char;
-        }
-      }
-
-      result.push(current);
-      return result;
-    }
-
-    function importCSVText(text){
-      const lines = text.split(/\r?\n/).filter(line => line.trim());
-      if(lines.length < 2){
-        alert("CSV file appears empty.");
+    function clearAllData() {
+      if (shifts.length === 0) {
+        alert("There is nothing to clear.");
         return;
       }
 
-      const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
-      const rows = lines.slice(1);
+      const confirmed = confirm("Clear all saved shift data? This removes everything stored in the browser for this dashboard.");
+      if (!confirmed) return;
 
-      const imported = rows.map(line => {
-        const cells = parseCSVLine(line);
-        const row = {};
-        headers.forEach((header, idx) => row[header] = cells[idx]);
-        return normalizeShift({
-          date: row.date,
-          section: row.section,
-          hours: row.hours,
-          tips: row.tips,
-          basePay: row.basepay || row.base_pay || row.basepayamount || 0,
-          tag: row.tag
-        });
-      }).filter(Boolean);
-
-      if(!imported.length){
-        alert("No valid rows were found in the CSV.");
-        return;
-      }
-
-      shifts = [...shifts, ...imported].sort(sortByDateAsc);
-      saveData();
-      populateFilterOptions();
-      applyFilters();
-      alert(`Imported ${imported.length} shift(s).`);
+      shifts = [];
+      saveShifts();
+      cancelEdit();
+      renderAll();
     }
 
-    document.getElementById("csvFileInput").addEventListener("change", event => {
-      const file = event.target.files[0];
-      if(!file) return;
+    function renderAll() {
+      sortShifts();
+      refreshPreview();
+      updateModeNote();
+      renderHeroAndStats();
+      renderWeeklyDrawers();
+    }
 
-      const reader = new FileReader();
-      reader.onload = e => importCSVText(e.target.result);
-      reader.readAsText(file);
-      event.target.value = "";
+    function bindPreviewListeners() {
+      fieldIds.forEach(id => {
+        document.getElementById(id).addEventListener("input", refreshPreview);
+        document.getElementById(id).addEventListener("change", refreshPreview);
+      });
+    }
+
+    elements.saveBtn.addEventListener("click", handleSave);
+    elements.cancelBtn.addEventListener("click", () => cancelEdit());
+    elements.clearBtn.addEventListener("click", () => {
+      clearForm();
+      if (editingId !== null) cancelEdit(false);
+      refreshPreview();
     });
+    elements.jumpBtn.addEventListener("click", () => {
+      elements.weeklySection.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    elements.exportBtn.addEventListener("click", exportCSV);
+    elements.clearAllBtn.addEventListener("click", clearAllData);
 
-    function renderAll(){
-      updateHeaderStats();
-      updateFilterSummary();
-      renderSectionStats();
-      renderDayStats();
-      renderTagStats();
-      renderWeeklyHistory();
-      renderTable();
-      renderCharts();
-    }
+    bindPreviewListeners();
 
-    function refreshAll(){
-      populateFilterOptions();
-      applyFilters();
-    }
+    window.startEditById = function(id) {
+      startEdit(id);
+    };
 
-    populateFilterOptions();
-    filteredShifts = [...shifts];
+    window.deleteShiftById = function(id) {
+      deleteShift(id);
+    };
+
     renderAll();
   </script>
 </body>
