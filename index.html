@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shift Income Tracker</title>
+
+<style>
+body{
+font-family:Arial;
+padding:20px;
+background:#f5f5f5;
+}
+
+h1{
+text-align:center;
+}
+
+input, button{
+width:100%;
+padding:12px;
+margin:6px 0;
+font-size:16px;
+}
+
+button{
+background:#2ecc71;
+color:white;
+border:none;
+}
+
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
+
+td, th{
+border:1px solid #ddd;
+padding:8px;
+}
+
+.summary{
+margin-top:20px;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Shift Tracker</h1>
+
+<input type="date" id="date">
+<input type="number" id="hours" placeholder="Hours Worked">
+<input type="number" id="tips" placeholder="Tips Earned">
+
+<button onclick="addShift()">Add Shift</button>
+
+<table id="shiftTable">
+
+<tr>
+<th>Date</th>
+<th>Hours</th>
+<th>Tips</th>
+</tr>
+
+</table>
+
+<div class="summary">
+
+Total Tips: $<span id="totalTips">0</span><br>
+Total Hours: <span id="totalHours">0</span><br>
+Average Per Hour: $<span id="avg">0</span>
+
+</div>
+
+<script>
+
+let shifts = []
+
+function addShift(){
+
+let date = document.getElementById("date").value
+let hours = parseFloat(document.getElementById("hours").value)
+let tips = parseFloat(document.getElementById("tips").value)
+
+if(!date || !hours || !tips){
+alert("Fill all fields")
+return
+}
+
+shifts.push({date,hours,tips})
+
+renderTable()
+calculateTotals()
+
+}
+
+function renderTable(){
+
+let table = document.getElementById("shiftTable")
+
+table.innerHTML = `
+<tr>
+<th>Date</th>
+<th>Hours</th>
+<th>Tips</th>
+</tr>
+`
+
+shifts.forEach(shift =>{
+
+table.innerHTML += `
+<tr>
+<td>${shift.date}</td>
+<td>${shift.hours}</td>
+<td>$${shift.tips}</td>
+</tr>
+`
+
+})
+
+}
+
+function calculateTotals(){
+
+let totalTips = shifts.reduce((sum,s)=>sum+s.tips,0)
+let totalHours = shifts.reduce((sum,s)=>sum+s.hours,0)
+
+document.getElementById("totalTips").innerText = totalTips.toFixed(2)
+document.getElementById("totalHours").innerText = totalHours.toFixed(2)
+
+let avg = totalHours ? totalTips/totalHours : 0
+
+document.getElementById("avg").innerText = avg.toFixed(2)
+
+}
+
+</script>
+
+</body>
+</html>
