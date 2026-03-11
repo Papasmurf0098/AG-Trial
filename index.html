@@ -3,56 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shift Income Dashboard</title>
+  <title>Shift Income Dashboard — Iteration 5</title>
   <style>
     :root {
-      --bg: #0a0f10;
-      --bg-soft: #101718;
-      --panel: #131c1e;
-      --panel-2: #182426;
-      --panel-3: #0f1516;
-      --border: #223436;
-      --accent: #28d7c5;
-      --accent-2: #17b8a7;
-      --text: #e8f5f4;
-      --muted: #94b5b2;
-      --danger: #ff6e7a;
-      --warning: #ffbe5c;
-      --shadow: 0 14px 32px rgba(0, 0, 0, 0.34);
-      --radius: 20px;
+      --bg: #091012;
+      --bg-2: #0c1315;
+      --panel: #121b1d;
+      --panel-2: #172325;
+      --panel-3: #0f1618;
+      --border: #223739;
+      --border-soft: rgba(255,255,255,0.05);
+      --accent: #2ad8c7;
+      --accent-2: #18b9a8;
+      --accent-soft: rgba(42, 216, 199, 0.14);
+      --text: #e9f5f4;
+      --muted: #97b6b2;
+      --danger: #ff6f7b;
+      --warning: #ffbf61;
+      --success: #79e7c2;
+      --shadow: 0 16px 36px rgba(0, 0, 0, 0.34);
+      --radius: 22px;
       --radius-sm: 14px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     html, body {
       margin: 0;
       padding: 0;
+      min-height: 100%;
       background:
-        radial-gradient(circle at top right, rgba(40, 215, 197, 0.10), transparent 24%),
-        radial-gradient(circle at top left, rgba(40, 215, 197, 0.06), transparent 20%),
-        linear-gradient(180deg, #091012, #0a0f10 35%, #0b1011);
+        radial-gradient(circle at top right, rgba(42,216,199,0.11), transparent 24%),
+        radial-gradient(circle at top left, rgba(42,216,199,0.06), transparent 18%),
+        linear-gradient(180deg, var(--bg), var(--bg-2) 40%, #0a1012 100%);
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      min-height: 100%;
     }
 
-    body {
-      padding: 14px;
-    }
+    body { padding: 14px; }
 
     .app {
       max-width: 1180px;
       margin: 0 auto;
+      display: grid;
+      gap: 16px;
     }
 
     .hero,
     .drawer,
     .cabinet,
     .panel,
-    .week-drawer {
+    .week-drawer,
+    .glass-card {
       background: linear-gradient(180deg, var(--panel), var(--panel-3));
       border: 1px solid var(--border);
       border-radius: var(--radius);
@@ -60,71 +62,86 @@
     }
 
     .hero {
-      padding: 20px 18px;
-      margin-bottom: 16px;
-      background: linear-gradient(180deg, rgba(40, 215, 197, 0.12), rgba(40, 215, 197, 0.04));
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(42,216,199,0.14), rgba(42,216,199,0.04));
+      position: sticky;
+      top: 10px;
+      z-index: 10;
+      backdrop-filter: blur(6px);
     }
 
-    .hero-top {
+    .hero-title-row {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 14px;
     }
 
     .hero h1 {
       margin: 0;
-      font-size: 1.85rem;
-      line-height: 1.1;
+      font-size: 1.9rem;
+      line-height: 1.08;
       color: var(--accent);
       letter-spacing: 0.2px;
     }
 
     .hero p {
-      margin: 0;
+      margin: 8px 0 0 0;
       color: var(--muted);
       line-height: 1.45;
-      font-size: 0.98rem;
+      font-size: 0.97rem;
+      max-width: 720px;
+    }
+
+    .hero-badge {
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(42,216,199,0.18);
+      background: rgba(9, 17, 18, 0.5);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 800;
+      white-space: nowrap;
     }
 
     .hero-snapshot {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
       margin-top: 14px;
     }
 
-    .hero-chip {
-      background: rgba(17, 27, 29, 0.92);
-      border: 1px solid rgba(40, 215, 197, 0.16);
+    .chip {
+      background: rgba(16, 26, 28, 0.95);
+      border: 1px solid rgba(42,216,199,0.16);
       border-radius: 16px;
       padding: 12px;
     }
 
-    .hero-chip-label {
+    .chip-label {
       color: var(--muted);
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       text-transform: uppercase;
       letter-spacing: 0.45px;
-      font-weight: 700;
+      font-weight: 800;
     }
 
-    .hero-chip-value {
-      margin-top: 8px;
-      font-size: 1.18rem;
+    .chip-value {
+      margin-top: 7px;
+      font-size: 1.12rem;
       font-weight: 800;
       color: var(--text);
     }
 
     .main-grid {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1.12fr 0.88fr;
       gap: 16px;
-      margin-bottom: 16px;
     }
 
     .section-header {
       padding: 14px 16px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid var(--border-soft);
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
@@ -145,8 +162,27 @@
       line-height: 1.35;
     }
 
-    .section-body {
-      padding: 16px;
+    .section-body { padding: 16px; }
+
+    .form-sections {
+      display: grid;
+      gap: 14px;
+    }
+
+    .form-block {
+      border: 1px solid rgba(255,255,255,0.04);
+      background: linear-gradient(180deg, rgba(24, 36, 38, 0.72), rgba(15, 22, 24, 0.72));
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .form-block-title {
+      margin: 0 0 12px 0;
+      color: var(--accent);
+      font-size: 0.88rem;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
     }
 
     .form-grid {
@@ -161,20 +197,16 @@
       gap: 6px;
     }
 
-    .field.full {
-      grid-column: 1 / -1;
-    }
+    .field.full { grid-column: 1 / -1; }
 
     label {
       color: var(--muted);
-      font-size: 0.84rem;
+      font-size: 0.83rem;
       font-weight: 700;
       letter-spacing: 0.15px;
     }
 
-    input,
-    select,
-    button {
+    input, select, button {
       width: 100%;
       border: none;
       border-radius: var(--radius-sm);
@@ -183,33 +215,51 @@
       font-family: inherit;
     }
 
-    input,
-    select {
+    input, select {
       color: var(--text);
       background: var(--panel-2);
-      border: 1px solid #294144;
+      border: 1px solid #294244;
       outline: none;
     }
 
-    input:focus,
-    select:focus {
+    input:focus, select:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(40, 215, 197, 0.14);
+      box-shadow: 0 0 0 3px rgba(42,216,199,0.14);
+    }
+
+    .input-hint {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 0.75rem;
+      line-height: 1.35;
     }
 
     .preview-box {
       margin-top: 14px;
       padding: 14px;
-      border-radius: 16px;
-      background: linear-gradient(180deg, rgba(24, 36, 38, 0.96), rgba(15, 21, 22, 0.96));
-      border: 1px solid rgba(40, 215, 197, 0.16);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(23,35,37,0.96), rgba(14,21,23,0.96));
+      border: 1px solid rgba(42,216,199,0.16);
+    }
+
+    .preview-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
     }
 
     .preview-title {
       color: var(--accent);
       font-size: 0.9rem;
       font-weight: 800;
-      margin-bottom: 10px;
+    }
+
+    .preview-status {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 700;
     }
 
     .preview-grid {
@@ -219,17 +269,17 @@
     }
 
     .preview-item {
-      background: rgba(20, 29, 30, 0.85);
-      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: rgba(17, 27, 29, 0.86);
+      border: 1px solid rgba(255,255,255,0.04);
       border-radius: 14px;
       padding: 10px 12px;
     }
 
     .preview-label {
       color: var(--muted);
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       text-transform: uppercase;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 0.45px;
     }
 
@@ -239,6 +289,9 @@
       font-weight: 800;
       color: var(--text);
     }
+
+    .preview-value.negative { color: #ffadb4; }
+    .preview-value.positive { color: var(--success); }
 
     .warnings {
       margin-top: 12px;
@@ -251,18 +304,19 @@
       padding: 10px 12px;
       font-size: 0.86rem;
       font-weight: 700;
+      line-height: 1.35;
     }
 
     .warning-item.warning {
-      background: rgba(255, 190, 92, 0.12);
-      border: 1px solid rgba(255, 190, 92, 0.26);
-      color: #ffd28c;
+      background: rgba(255,191,97,0.12);
+      border: 1px solid rgba(255,191,97,0.24);
+      color: #ffd492;
     }
 
     .warning-item.danger {
-      background: rgba(255, 110, 122, 0.12);
-      border: 1px solid rgba(255, 110, 122, 0.26);
-      color: #ffadb4;
+      background: rgba(255,111,123,0.12);
+      border: 1px solid rgba(255,111,123,0.24);
+      color: #ffb2b9;
     }
 
     .button-row {
@@ -275,12 +329,11 @@
     button {
       cursor: pointer;
       font-weight: 800;
-      transition: transform 0.08s ease, opacity 0.15s ease;
+      transition: transform 0.08s ease, opacity 0.15s ease, filter 0.15s ease;
     }
 
-    button:active {
-      transform: scale(0.985);
-    }
+    button:active { transform: scale(0.985); }
+    button:hover { filter: brightness(1.04); }
 
     .btn-primary {
       background: linear-gradient(180deg, var(--accent), var(--accent-2));
@@ -288,21 +341,21 @@
     }
 
     .btn-secondary {
-      background: #1b2729;
+      background: #1b282a;
       color: var(--text);
-      border: 1px solid #2c4345;
+      border: 1px solid #2d4648;
     }
 
     .btn-danger {
-      background: rgba(255, 110, 122, 0.12);
-      color: #ffadb4;
-      border: 1px solid rgba(255, 110, 122, 0.22);
+      background: rgba(255,111,123,0.12);
+      color: #ffb2b9;
+      border: 1px solid rgba(255,111,123,0.24);
     }
 
     .mode-note {
       margin-top: 10px;
       color: var(--muted);
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       line-height: 1.35;
     }
 
@@ -313,11 +366,11 @@
     }
 
     .stat-card {
-      background: linear-gradient(180deg, #152022, #101618);
+      background: linear-gradient(180deg, #152123, #101719);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 14px;
-      min-height: 96px;
+      min-height: 100px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -325,7 +378,7 @@
 
     .stat-label {
       color: var(--muted);
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.45px;
@@ -334,7 +387,7 @@
     .stat-value {
       margin-top: 10px;
       color: var(--text);
-      font-size: 1.25rem;
+      font-size: 1.24rem;
       font-weight: 800;
       line-height: 1.15;
     }
@@ -346,87 +399,61 @@
       line-height: 1.3;
     }
 
-    .stack {
-      display: grid;
-      gap: 16px;
-    }
+    .stack { display: grid; gap: 16px; }
 
     details.week-drawer {
       overflow: hidden;
     }
 
     details.week-drawer[open] {
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.22);
     }
 
     .week-drawer summary {
       list-style: none;
       cursor: pointer;
       padding: 14px 16px;
-      background: #122022;
+      background: #122123;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 14px;
     }
 
-    .week-drawer summary::-webkit-details-marker {
-      display: none;
-    }
+    .week-drawer summary::-webkit-details-marker { display: none; }
 
-    .week-left {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+    .week-left { display: flex; flex-direction: column; gap: 4px; }
+    .week-title { color: var(--accent); font-size: 0.98rem; font-weight: 800; }
+    .week-meta { color: var(--muted); font-size: 0.84rem; }
+    .week-right { text-align: right; color: var(--text); font-size: 0.86rem; font-weight: 700; line-height: 1.35; }
 
-    .week-title {
-      color: var(--accent);
-      font-size: 0.98rem;
-      font-weight: 800;
-    }
-
-    .week-meta {
-      color: var(--muted);
-      font-size: 0.84rem;
-    }
-
-    .week-right {
-      text-align: right;
-      color: var(--text);
-      font-size: 0.86rem;
-      font-weight: 700;
-      line-height: 1.35;
-    }
-
-    .table-shell {
-      overflow-x: auto;
-    }
+    .table-shell { overflow-x: auto; }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 980px;
+      min-width: 1080px;
     }
 
-    th,
-    td {
+    th, td {
       padding: 12px 10px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
       text-align: left;
-      font-size: 0.92rem;
+      font-size: 0.91rem;
       vertical-align: middle;
     }
 
     th {
-      background: #132022;
+      background: #132123;
       color: var(--accent);
       font-weight: 800;
+      position: sticky;
+      top: 0;
     }
 
-    tr:hover td {
-      background: rgba(40, 215, 197, 0.04);
-    }
+    tr:hover td { background: rgba(42,216,199,0.04); }
+
+    .number-subtle { color: var(--muted); }
 
     .tag-pill {
       display: inline-block;
@@ -442,14 +469,14 @@
 
     .action-row {
       display: flex;
-      flex-wrap: wrap;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     .small-btn {
       width: auto;
       padding: 8px 10px;
-      font-size: 0.83rem;
+      font-size: 0.82rem;
       border-radius: 10px;
     }
 
@@ -459,10 +486,240 @@
       font-size: 0.92rem;
     }
 
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .chart-shell {
+      position: relative;
+      height: 280px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.04);
+      background: linear-gradient(180deg, rgba(17,27,29,0.82), rgba(12,18,19,0.82));
+      padding: 10px;
+    }
+
+    .trend-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-trend {
+      background: linear-gradient(180deg, #152123, #101719);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      min-height: 92px;
+    }
+
+    .mini-trend-label {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+    }
+
+    .mini-trend-value {
+      margin-top: 10px;
+      color: var(--text);
+      font-size: 1.16rem;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .mini-trend-meta {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.3;
+    }
+
     .export-panel-actions {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
+    }
+
+    .goal-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .progress-shell {
+      margin-top: 10px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--success));
+      border-radius: 999px;
+      transition: width 0.2s ease;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .calendar-head {
+      color: var(--muted);
+      font-size: 0.76rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+      text-align: center;
+      padding: 4px 0;
+    }
+
+    .calendar-day {
+      min-height: 88px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.05);
+      padding: 10px 8px;
+      background: linear-gradient(180deg, rgba(17,27,29,0.86), rgba(12,18,19,0.86));
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .calendar-day.empty {
+      background: rgba(255,255,255,0.02);
+      border-style: dashed;
+      min-height: 72px;
+    }
+
+    .calendar-day.active-1 { box-shadow: inset 0 0 0 999px rgba(42,216,199,0.08); }
+    .calendar-day.active-2 { box-shadow: inset 0 0 0 999px rgba(42,216,199,0.14); }
+    .calendar-day.active-3 { box-shadow: inset 0 0 0 999px rgba(42,216,199,0.22); }
+    .calendar-day.active-4 { box-shadow: inset 0 0 0 999px rgba(42,216,199,0.30); }
+
+    .calendar-date {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .calendar-value {
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+
+    .calendar-meta {
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.25;
+    }
+
+    .insight-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .insight-item {
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.05);
+      background: linear-gradient(180deg, rgba(21,33,35,0.9), rgba(13,19,21,0.9));
+    }
+
+    .insight-title {
+      color: var(--accent);
+      font-size: 0.86rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .insight-body {
+      color: var(--text);
+      font-size: 0.88rem;
+      line-height: 1.4;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .kpi-card {
+      background: linear-gradient(180deg, rgba(21,33,35,0.9), rgba(13,19,21,0.9));
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 12px;
+      min-height: 90px;
+    }
+
+    .kpi-label {
+      color: var(--muted);
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+    }
+
+    .kpi-value {
+      margin-top: 8px;
+      color: var(--text);
+      font-size: 1.12rem;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .kpi-meta {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.3;
+    }
+
+    .drawer-chip-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .drawer-chip {
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: rgba(17,27,29,0.85);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .drawer-chip-label {
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.45px;
+    }
+
+    .drawer-chip-value {
+      margin-top: 7px;
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 800;
     }
 
     .small-note {
@@ -473,56 +730,69 @@
     }
 
     @media (max-width: 980px) {
+      .hero { position: static; }
       .main-grid,
       .hero-snapshot,
       .form-grid,
       .preview-grid,
       .stats-grid,
       .button-row,
-      .export-panel-actions {
+      .export-panel-actions,
+      .chart-grid,
+      .trend-grid,
+      .goal-grid,
+      .toolbar,
+      .kpi-strip,
+      .drawer-chip-row {
         grid-template-columns: 1fr;
       }
 
-      .hero h1 {
-        font-size: 1.58rem;
+      .calendar-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      body {
-        padding: 12px;
-      }
-
+      .hero-title-row,
       .week-drawer summary {
         flex-direction: column;
         align-items: flex-start;
       }
 
-      .week-right {
-        text-align: left;
-      }
+      .week-right { text-align: left; }
+
+      .hero h1 { font-size: 1.58rem; }
+      body { padding: 12px; }
+    }
+    }
+    }
     }
   </style>
 </head>
 <body>
   <div class="app">
     <section class="hero">
-      <div class="hero-top">
+      <div class="hero-title-row">
         <div>
           <h1>Shift Income Dashboard</h1>
-          <p>Track real take-home pay from each shift with a cleaner cabinet-style layout and Friday-to-Thursday weekly drawers.</p>
+          <p>Iteration 5: final polish pass with smarter quick actions, KPI callouts, tighter mobile ergonomics, and a more complete product feel.</p>
         </div>
+        <div class="hero-badge">Iteration 5</div>
       </div>
       <div class="hero-snapshot">
-        <div class="hero-chip">
-          <div class="hero-chip-label">This Week Take-Home</div>
-          <div class="hero-chip-value" id="heroWeekTakeHome">$0.00</div>
+        <div class="chip">
+          <div class="chip-label">This Week Take-Home</div>
+          <div class="chip-value" id="heroWeekTakeHome">$0.00</div>
         </div>
-        <div class="hero-chip">
-          <div class="hero-chip-label">This Week Net Hourly</div>
-          <div class="hero-chip-value" id="heroWeekHourly">$0.00</div>
+        <div class="chip">
+          <div class="chip-label">This Week Net Hourly</div>
+          <div class="chip-value" id="heroWeekHourly">$0.00</div>
         </div>
-        <div class="hero-chip">
-          <div class="hero-chip-label">This Week Shifts</div>
-          <div class="hero-chip-value" id="heroWeekShifts">0</div>
+        <div class="chip">
+          <div class="chip-label">This Week Shifts</div>
+          <div class="chip-value" id="heroWeekShifts">0</div>
+        </div>
+        <div class="chip">
+          <div class="chip-label">Last Saved Shift</div>
+          <div class="chip-value" id="heroLastShift">—</div>
         </div>
       </div>
     </section>
@@ -532,91 +802,101 @@
         <div class="section-header">
           <div>
             <div class="section-title">Shift Entry Drawer</div>
-            <div class="section-subtitle">Add a shift, review the live math, then save it into the weekly stack.</div>
+            <div class="section-subtitle">The form is now split into cleaner compartments so it feels less like tax paperwork and more like an actual tool.</div>
           </div>
         </div>
         <div class="section-body">
-          <div class="form-grid">
-            <div class="field">
-              <label for="date">Date</label>
-              <input type="date" id="date" />
+          <div class="form-sections">
+            <div class="form-block">
+              <div class="form-block-title">Shift Basics</div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="date">Date</label>
+                  <input type="date" id="date" />
+                </div>
+                <div class="field">
+                  <label for="job">Restaurant / Job</label>
+                  <input type="text" id="job" placeholder="Texas Roadhouse" />
+                </div>
+                <div class="field">
+                  <label for="role">Role</label>
+                  <select id="role">
+                    <option value="">Select role</option>
+                    <option value="Server">Server</option>
+                    <option value="Bartender">Bartender</option>
+                    <option value="Food Runner">Food Runner</option>
+                    <option value="Host">Host</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="section">Section</label>
+                  <input type="text" id="section" placeholder="Patio / Section 2" />
+                </div>
+                <div class="field full">
+                  <label for="hours">Hours Worked</label>
+                  <input type="number" id="hours" min="0" step="0.01" placeholder="6.5" />
+                  <div class="input-hint">Use the total shift length, not your scheduled length if you were cut early.</div>
+                </div>
+              </div>
             </div>
 
-            <div class="field">
-              <label for="job">Restaurant / Job</label>
-              <input type="text" id="job" placeholder="Texas Roadhouse" />
+            <div class="form-block">
+              <div class="form-block-title">Earnings</div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="cashTips">Cash Tips</label>
+                  <input type="number" id="cashTips" min="0" step="0.01" placeholder="40" />
+                </div>
+                <div class="field">
+                  <label for="creditTips">Credit Tips</label>
+                  <input type="number" id="creditTips" min="0" step="0.01" placeholder="145" />
+                </div>
+                <div class="field">
+                  <label for="sales">Sales</label>
+                  <input type="number" id="sales" min="0" step="0.01" placeholder="900" />
+                </div>
+                <div class="field">
+                  <label for="baseWage">Base Wage Earned</label>
+                  <input type="number" id="baseWage" min="0" step="0.01" placeholder="15.60" />
+                </div>
+              </div>
             </div>
 
-            <div class="field">
-              <label for="role">Role</label>
-              <select id="role">
-                <option value="">Select role</option>
-                <option value="Server">Server</option>
-                <option value="Bartender">Bartender</option>
-                <option value="Food Runner">Food Runner</option>
-                <option value="Host">Host</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-
-            <div class="field">
-              <label for="section">Section</label>
-              <input type="text" id="section" placeholder="Patio / Section 2" />
-            </div>
-
-            <div class="field">
-              <label for="hours">Hours Worked</label>
-              <input type="number" id="hours" min="0" step="0.01" placeholder="6.5" />
-            </div>
-
-            <div class="field">
-              <label for="cashTips">Cash Tips</label>
-              <input type="number" id="cashTips" min="0" step="0.01" placeholder="40" />
-            </div>
-
-            <div class="field">
-              <label for="creditTips">Credit Tips</label>
-              <input type="number" id="creditTips" min="0" step="0.01" placeholder="145" />
-            </div>
-
-            <div class="field">
-              <label for="sales">Sales</label>
-              <input type="number" id="sales" min="0" step="0.01" placeholder="900" />
-            </div>
-
-            <div class="field">
-              <label for="baseWage">Base Wage Earned</label>
-              <input type="number" id="baseWage" min="0" step="0.01" placeholder="15.60" />
-            </div>
-
-            <div class="field">
-              <label for="tipOut">Tip-Out Amount</label>
-              <input type="number" id="tipOut" min="0" step="0.01" placeholder="20" />
-            </div>
-
-            <div class="field">
-              <label for="otherDeductions">Other Deductions</label>
-              <input type="number" id="otherDeductions" min="0" step="0.01" placeholder="0" />
-            </div>
-
-            <div class="field">
-              <label for="tag">Shift Tag (optional)</label>
-              <select id="tag">
-                <option value="">No tag</option>
-                <option value="good">Good</option>
-                <option value="bad">Bad</option>
-                <option value="slow">Slow</option>
-                <option value="busy">Busy</option>
-                <option value="raining">Raining</option>
-                <option value="cloudy">Cloudy</option>
-                <option value="cold">Cold</option>
-                <option value="hot">Hot</option>
-              </select>
+            <div class="form-block">
+              <div class="form-block-title">Deductions & Context</div>
+              <div class="form-grid">
+                <div class="field">
+                  <label for="tipOut">Tip-Out Amount</label>
+                  <input type="number" id="tipOut" min="0" step="0.01" placeholder="20" />
+                </div>
+                <div class="field">
+                  <label for="otherDeductions">Other Deductions</label>
+                  <input type="number" id="otherDeductions" min="0" step="0.01" placeholder="0" />
+                </div>
+                <div class="field full">
+                  <label for="tag">Shift Tag (optional)</label>
+                  <select id="tag">
+                    <option value="">No tag</option>
+                    <option value="good">Good</option>
+                    <option value="bad">Bad</option>
+                    <option value="slow">Slow</option>
+                    <option value="busy">Busy</option>
+                    <option value="raining">Raining</option>
+                    <option value="cloudy">Cloudy</option>
+                    <option value="cold">Cold</option>
+                    <option value="hot">Hot</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
 
           <div class="preview-box">
-            <div class="preview-title">Live Shift Preview</div>
+            <div class="preview-header">
+              <div class="preview-title">Live Shift Preview</div>
+              <div class="preview-status" id="previewStatus">Preview ready</div>
+            </div>
             <div class="preview-grid">
               <div class="preview-item">
                 <div class="preview-label">Gross Tips</div>
@@ -653,6 +933,21 @@
             <button class="btn-secondary" id="jumpBtn" type="button">Jump to Weekly Drawers</button>
           </div>
 
+          <div class="drawer-chip-row">
+            <div class="drawer-chip">
+              <div class="drawer-chip-label">Recommended Section</div>
+              <div class="drawer-chip-value" id="drawerBestSection">—</div>
+            </div>
+            <div class="drawer-chip">
+              <div class="drawer-chip-label">Recommended Day</div>
+              <div class="drawer-chip-value" id="drawerBestDay">—</div>
+            </div>
+            <div class="drawer-chip">
+              <div class="drawer-chip-label">Current Avg Shift</div>
+              <div class="drawer-chip-value" id="drawerAvgShift">$0.00</div>
+            </div>
+          </div>
+
           <div class="mode-note" id="modeNote">Mode: adding a new shift.</div>
         </div>
       </div>
@@ -661,7 +956,7 @@
         <div class="section-header">
           <div>
             <div class="section-title">Performance Cabinet</div>
-            <div class="section-subtitle">Headline metrics across all stored shifts.</div>
+            <div class="section-subtitle">Tightened stat hierarchy with cleaner summaries and a better best-shift readout.</div>
           </div>
         </div>
         <div class="section-body">
@@ -698,18 +993,278 @@
             <div class="stat-card">
               <div class="stat-label">Total Hours</div>
               <div class="stat-value" id="statTotalHours">0.00</div>
+              <div class="stat-meta" id="statAverageShiftLength">Avg shift length: 0.00 hrs</div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="stack" id="weeklySection">
+    <section class="panel">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Quick Actions Cabinet</div>
+            <div class="section-subtitle">Fast controls for the most common views so you do not have to keep poking six filters like a confused woodpecker.</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="toolbar">
+            <button class="btn-secondary" id="showAllBtn" type="button">Show All</button>
+            <button class="btn-secondary" id="last7Btn" type="button">Last 7 Days</button>
+            <button class="btn-secondary" id="bestSectionBtn" type="button">Best Section View</button>
+            <button class="btn-secondary" id="worstSectionBtn" type="button">Worst Section View</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Filter Cabinet</div>
+            <div class="section-subtitle">Slice the data without harming the underlying ledger. Tiny scalpel, not chainsaw.</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="field">
+              <label for="filterStartDate">Start Date</label>
+              <input type="date" id="filterStartDate" />
+            </div>
+            <div class="field">
+              <label for="filterEndDate">End Date</label>
+              <input type="date" id="filterEndDate" />
+            </div>
+            <div class="field">
+              <label for="filterJob">Restaurant / Job</label>
+              <select id="filterJob">
+                <option value="">All jobs</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filterRole">Role</label>
+              <select id="filterRole">
+                <option value="">All roles</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filterSection">Section</label>
+              <select id="filterSection">
+                <option value="">All sections</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="filterTag">Shift Tag</label>
+              <select id="filterTag">
+                <option value="">All tags</option>
+                <option value="good">Good</option>
+                <option value="bad">Bad</option>
+                <option value="slow">Slow</option>
+                <option value="busy">Busy</option>
+                <option value="raining">Raining</option>
+                <option value="cloudy">Cloudy</option>
+                <option value="cold">Cold</option>
+                <option value="hot">Hot</option>
+              </select>
+            </div>
+          </div>
+          <div class="button-row" style="margin-top:12px; grid-template-columns: repeat(3, minmax(0,1fr));">
+            <button class="btn-secondary" id="clearFiltersBtn" type="button">Clear Filters</button>
+            <button class="btn-secondary" id="thisWeekBtn" type="button">This Week</button>
+            <button class="btn-secondary" id="thisMonthBtn" type="button">This Month</button>
+          </div>
+          <div class="mode-note" id="filterSummary">Showing all shifts.</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-header">
+          <div>
+            <div class="section-title">KPI Cabinet</div>
+            <div class="section-subtitle">Small but useful performance callouts for the active slice.</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="kpi-strip" id="kpiStrip"></div>
+        </div>
+      </section>
+
+      <section class="main-grid" style="grid-template-columns: 1fr 1fr;">
+        <div class="cabinet">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Section Performance Cabinet</div>
+              <div class="section-subtitle">Which section actually pays, not which one people merely gossip about.</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="stack" id="sectionPerformance"></div>
+          </div>
+        </div>
+
+        <div class="cabinet">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Day-of-Week Cabinet</div>
+              <div class="section-subtitle">Some days are generous. Others are gremlins in aprons.</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="stack" id="dayPerformance"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Context Cabinet</div>
+            <div class="section-subtitle">Tag summaries turn vibes into structured evidence. Deliciously unromantic.</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="stats-grid" id="tagPerformance"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Trend Cabinet</div>
+            <div class="section-subtitle">Compressed summaries for the filtered view before the actual charts start showing their tiny glowing teeth.</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="trend-grid" id="trendSummary"></div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-header">
+          <div>
+            <div class="section-title">Goal Cabinet</div>
+            <div class="section-subtitle">Simple weekly and monthly targets, because wandering into payday fog is a nonsense strategy.</div>
+          </div>
+        </div>
+        <div class="section-body">
+          <div class="goal-grid">
+            <div class="form-block" style="padding:12px;">
+              <div class="form-block-title">Weekly Goal</div>
+              <div class="field">
+                <label for="weeklyGoal">Target Take-Home</label>
+                <input type="number" id="weeklyGoal" min="0" step="0.01" placeholder="1000" />
+              </div>
+              <div class="progress-shell"><div class="progress-bar" id="weeklyGoalBar"></div></div>
+              <div class="small-note" id="weeklyGoalSummary">No weekly goal set.</div>
+            </div>
+            <div class="form-block" style="padding:12px;">
+              <div class="form-block-title">Monthly Goal</div>
+              <div class="field">
+                <label for="monthlyGoal">Target Take-Home</label>
+                <input type="number" id="monthlyGoal" min="0" step="0.01" placeholder="4000" />
+              </div>
+              <div class="progress-shell"><div class="progress-bar" id="monthlyGoalBar"></div></div>
+              <div class="small-note" id="monthlyGoalSummary">No monthly goal set.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="main-grid" style="grid-template-columns: 1fr 1fr;">
+        <div class="panel">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Calendar Cabinet</div>
+              <div class="section-subtitle">Monthly earnings heatmap. Bright days paid. Dim days merely existed.</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="button-row" style="grid-template-columns: repeat(3, minmax(0,1fr)); margin-top:0; margin-bottom:12px;">
+              <button class="btn-secondary" id="calendarPrevBtn" type="button">Previous</button>
+              <button class="btn-secondary" id="calendarTodayBtn" type="button">Current Month</button>
+              <button class="btn-secondary" id="calendarNextBtn" type="button">Next</button>
+            </div>
+            <div class="mode-note" id="calendarTitle">Calendar</div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Insight Cabinet</div>
+              <div class="section-subtitle">Quick conclusions from the current slice, written plainly instead of hiding in chart spaghetti.</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="insight-list" id="insightList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="chart-grid">
+        <div class="panel">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Net Hourly Trend</div>
+              <div class="section-subtitle">Shift-by-shift rhythm over time.</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="chart-shell">
+              <canvas id="hourlyTrendChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Section Earnings Chart</div>
+              <div class="section-subtitle">Average take-home per hour by section.</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="chart-shell">
+              <canvas id="sectionChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Weekly Take-Home Trend</div>
+              <div class="section-subtitle">Friday–Thursday grouped totals.</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="chart-shell">
+              <canvas id="weeklyChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="section-header">
+            <div>
+              <div class="section-title">Tag Distribution</div>
+              <div class="section-subtitle">How often each shift mood or condition appears.</div>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="chart-shell">
+              <canvas id="tagChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="stack" id="weeklySection">
       <div class="panel">
         <div class="section-header">
           <div>
             <div class="section-title">Weekly Drawers</div>
-            <div class="section-subtitle">Each cabinet groups shifts from Friday through Thursday.</div>
+            <div class="section-subtitle">Friday through Thursday groups with slightly richer row detail and cleaner scanability.</div>
           </div>
         </div>
         <div class="section-body">
@@ -721,7 +1276,7 @@
         <div class="section-header">
           <div>
             <div class="section-title">Export Cabinet</div>
-            <div class="section-subtitle">Keep a backup or clear everything if you truly mean it.</div>
+            <div class="section-subtitle">Still simple on purpose: export when needed, clear only if you truly intend digital arson.</div>
           </div>
         </div>
         <div class="section-body">
@@ -729,33 +1284,57 @@
             <button class="btn-secondary" id="exportBtn" type="button">Export CSV</button>
             <button class="btn-danger" id="clearAllBtn" type="button">Clear All Data</button>
           </div>
-          <div class="small-note">Data is stored locally in your browser under a dedicated key. Clearing browser storage can erase it, so export occasionally unless you enjoy courting chaos.</div>
+          <div class="small-note">Stored locally under a dedicated browser key. Export occasionally unless you enjoy trusting your life to volatile browser storage, which is a bold hobby.</div>
         </div>
       </div>
     </section>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     const STORAGE_KEY = "shiftDashboardDataV1";
     let shifts = loadShifts();
     let editingId = null;
+    let calendarCursor = getInitialCalendarCursor();
+    const chartRegistry = {};
 
     const fieldIds = [
-      "date",
-      "job",
-      "role",
-      "section",
-      "hours",
-      "cashTips",
-      "creditTips",
-      "sales",
-      "baseWage",
-      "tipOut",
-      "otherDeductions",
-      "tag"
+      "date", "job", "role", "section", "hours", "cashTips", "creditTips",
+      "sales", "baseWage", "tipOut", "otherDeductions", "tag"
     ];
 
     const elements = {
+      showAllBtn: document.getElementById("showAllBtn"),
+      last7Btn: document.getElementById("last7Btn"),
+      bestSectionBtn: document.getElementById("bestSectionBtn"),
+      worstSectionBtn: document.getElementById("worstSectionBtn"),
+      kpiStrip: document.getElementById("kpiStrip"),
+      weeklyGoal: document.getElementById("weeklyGoal"),
+      monthlyGoal: document.getElementById("monthlyGoal"),
+      weeklyGoalBar: document.getElementById("weeklyGoalBar"),
+      monthlyGoalBar: document.getElementById("monthlyGoalBar"),
+      weeklyGoalSummary: document.getElementById("weeklyGoalSummary"),
+      monthlyGoalSummary: document.getElementById("monthlyGoalSummary"),
+      calendarGrid: document.getElementById("calendarGrid"),
+      calendarTitle: document.getElementById("calendarTitle"),
+      calendarPrevBtn: document.getElementById("calendarPrevBtn"),
+      calendarTodayBtn: document.getElementById("calendarTodayBtn"),
+      calendarNextBtn: document.getElementById("calendarNextBtn"),
+      insightList: document.getElementById("insightList"),
+      trendSummary: document.getElementById("trendSummary"),
+      filterStartDate: document.getElementById("filterStartDate"),
+      filterEndDate: document.getElementById("filterEndDate"),
+      filterJob: document.getElementById("filterJob"),
+      filterRole: document.getElementById("filterRole"),
+      filterSection: document.getElementById("filterSection"),
+      filterTag: document.getElementById("filterTag"),
+      clearFiltersBtn: document.getElementById("clearFiltersBtn"),
+      thisWeekBtn: document.getElementById("thisWeekBtn"),
+      thisMonthBtn: document.getElementById("thisMonthBtn"),
+      filterSummary: document.getElementById("filterSummary"),
+      sectionPerformance: document.getElementById("sectionPerformance"),
+      dayPerformance: document.getElementById("dayPerformance"),
+      tagPerformance: document.getElementById("tagPerformance"),
       saveBtn: document.getElementById("saveBtn"),
       cancelBtn: document.getElementById("cancelBtn"),
       clearBtn: document.getElementById("clearBtn"),
@@ -765,8 +1344,24 @@
       modeNote: document.getElementById("modeNote"),
       warnings: document.getElementById("warnings"),
       weeklyDrawers: document.getElementById("weeklyDrawers"),
-      weeklySection: document.getElementById("weeklySection")
+      weeklySection: document.getElementById("weeklySection"),
+      previewStatus: document.getElementById("previewStatus")
     };
+
+    function getInitialCalendarCursor() {
+      const now = new Date();
+      return { year: now.getFullYear(), month: now.getMonth() };
+    }
+
+    function loadGoalValue(key) {
+      const raw = localStorage.getItem(key);
+      const num = Number(raw);
+      return Number.isFinite(num) && num >= 0 ? num : 0;
+    }
+
+    function saveGoalValue(key, value) {
+      localStorage.setItem(key, String(value));
+    }
 
     function loadShifts() {
       try {
@@ -862,7 +1457,6 @@
 
     function validateForm(data) {
       const errors = [];
-
       if (!data.date) errors.push("Date is required.");
       if (!data.job) errors.push("Restaurant / Job is required.");
       if (!data.role) errors.push("Role is required.");
@@ -891,20 +1485,26 @@
       if (data.sales === 0 && derived.grossTips > 0) {
         warnings.push({ type: "warning", text: "Sales are $0 while tips are above $0. That may be fine, but double-check the entry." });
       }
-
       if (derived.netTips < 0) {
-        warnings.push({ type: "danger", text: "Net tips are negative. The shift will still save, but the math looks suspicious." });
+        warnings.push({ type: "danger", text: "Net tips are negative. The shift can still save, but the numbers look suspicious." });
       }
-
       if (data.tipOut > derived.grossTips && derived.grossTips > 0) {
-        warnings.push({ type: "warning", text: "Tip-out is greater than gross tips. Either the shift was cursed or one of the numbers is off." });
+        warnings.push({ type: "warning", text: "Tip-out is greater than gross tips. That might be correct, but it smells mathematically dramatic." });
       }
-
       if (data.baseWage > 0 && data.hours > 0 && (data.baseWage / data.hours) > 30) {
-        warnings.push({ type: "warning", text: "Base wage per hour looks unusually high. Check whether you entered total shift wage or hourly wage by accident." });
+        warnings.push({ type: "warning", text: "Base wage per hour looks unusually high. Make sure this is total shift wage, not hourly wage rate." });
+      }
+      if (derived.tipPercentOfSales > 35) {
+        warnings.push({ type: "warning", text: "Tip percentage of sales is very high. That can happen, but it is worth checking for fat-finger input." });
       }
 
       return warnings;
+    }
+
+    function updatePreviewValue(id, value, className = "") {
+      const el = document.getElementById(id);
+      el.textContent = value;
+      el.className = `preview-value ${className}`.trim();
     }
 
     function refreshPreview() {
@@ -912,16 +1512,15 @@
       const derived = calculateDerived(data);
       const warnings = getWarnings(data, derived);
 
-      document.getElementById("previewGrossTips").textContent = formatCurrency(derived.grossTips);
-      document.getElementById("previewNetTips").textContent = formatCurrency(derived.netTips);
-      document.getElementById("previewGrossHourly").textContent = formatCurrency(derived.grossHourly);
-      document.getElementById("previewNetHourly").textContent = formatCurrency(derived.netHourly);
-      document.getElementById("previewTipPercent").textContent = formatPercent(derived.tipPercentOfSales);
-      document.getElementById("previewTakeHome").textContent = formatCurrency(derived.totalTakeHome);
+      updatePreviewValue("previewGrossTips", formatCurrency(derived.grossTips), derived.grossTips > 0 ? "positive" : "");
+      updatePreviewValue("previewNetTips", formatCurrency(derived.netTips), derived.netTips < 0 ? "negative" : derived.netTips > 0 ? "positive" : "");
+      updatePreviewValue("previewGrossHourly", formatCurrency(derived.grossHourly));
+      updatePreviewValue("previewNetHourly", formatCurrency(derived.netHourly), derived.netHourly < 0 ? "negative" : derived.netHourly > 0 ? "positive" : "");
+      updatePreviewValue("previewTipPercent", formatPercent(derived.tipPercentOfSales));
+      updatePreviewValue("previewTakeHome", formatCurrency(derived.totalTakeHome), derived.totalTakeHome < 0 ? "negative" : derived.totalTakeHome > 0 ? "positive" : "");
 
-      elements.warnings.innerHTML = warnings
-        .map(item => `<div class="warning-item ${item.type}">${escapeHtml(item.text)}</div>`)
-        .join("");
+      elements.previewStatus.textContent = warnings.length ? `${warnings.length} warning${warnings.length === 1 ? "" : "s"}` : "Preview ready";
+      elements.warnings.innerHTML = warnings.map(item => `<div class="warning-item ${item.type}">${escapeHtml(item.text)}</div>`).join("");
     }
 
     function sortShifts() {
@@ -935,9 +1534,7 @@
       } else {
         const shift = shifts.find(item => item.id === editingId);
         elements.saveBtn.textContent = "Update Shift";
-        elements.modeNote.textContent = shift
-          ? `Mode: editing shift from ${shift.date}.`
-          : "Mode: editing a shift.";
+        elements.modeNote.textContent = shift ? `Mode: editing shift from ${shift.date}.` : "Mode: editing a shift.";
       }
     }
 
@@ -955,9 +1552,9 @@
     function handleSave() {
       const form = getFormData();
       const errors = validateForm(form);
-
       if (errors.length) {
-        alert(errors.join("\n"));
+        alert(errors.join("
+"));
         return;
       }
 
@@ -965,13 +1562,7 @@
       const now = new Date().toISOString();
 
       if (editingId === null) {
-        shifts.push({
-          id: generateId(),
-          createdAt: now,
-          updatedAt: now,
-          ...form,
-          ...derived
-        });
+        shifts.push({ id: generateId(), createdAt: now, updatedAt: now, ...form, ...derived });
       } else {
         const index = shifts.findIndex(item => item.id === editingId);
         if (index === -1) {
@@ -979,13 +1570,7 @@
           cancelEdit();
           return;
         }
-
-        shifts[index] = {
-          ...shifts[index],
-          ...form,
-          ...derived,
-          updatedAt: now
-        };
+        shifts[index] = { ...shifts[index], ...form, ...derived, updatedAt: now };
       }
 
       sortShifts();
@@ -1019,17 +1604,12 @@
     function deleteShift(id) {
       const shift = shifts.find(item => item.id === id);
       if (!shift) return;
-
       const confirmed = confirm(`Delete the shift from ${shift.date} (${shift.section})?`);
       if (!confirmed) return;
 
       shifts = shifts.filter(item => item.id !== id);
       saveShifts();
-
-      if (editingId === id) {
-        cancelEdit();
-      }
-
+      if (editingId === id) cancelEdit();
       renderAll();
     }
 
@@ -1063,16 +1643,98 @@
       }, {});
     }
 
-    function renderHeroAndStats() {
-      const totalGrossTips = shifts.reduce((sum, item) => sum + item.grossTips, 0);
-      const totalNetTips = shifts.reduce((sum, item) => sum + item.netTips, 0);
-      const totalTakeHome = shifts.reduce((sum, item) => sum + item.totalTakeHome, 0);
-      const totalHours = shifts.reduce((sum, item) => sum + item.hours, 0);
-      const overallNetHourly = totalHours > 0 ? totalTakeHome / totalHours : 0;
+    function getFilteredShifts() {
+      const start = elements.filterStartDate.value;
+      const end = elements.filterEndDate.value;
+      const job = elements.filterJob.value;
+      const role = elements.filterRole.value;
+      const section = elements.filterSection.value;
+      const tag = elements.filterTag.value;
 
-      const latestShift = shifts[shifts.length - 1] || null;
+      return shifts.filter(item => {
+        if (start && item.date < start) return false;
+        if (end && item.date > end) return false;
+        if (job && item.job !== job) return false;
+        if (role && item.role !== role) return false;
+        if (section && item.section !== section) return false;
+        if (tag && item.tag !== tag) return false;
+        return true;
+      });
+    }
+
+    function getSectionRankings(items) {
+      const grouped = {};
+      items.forEach(item => {
+        if (!grouped[item.section]) grouped[item.section] = { hours: 0, takeHome: 0, count: 0 };
+        grouped[item.section].hours += item.hours;
+        grouped[item.section].takeHome += item.totalTakeHome;
+        grouped[item.section].count += 1;
+      });
+      return Object.entries(grouped)
+        .map(([name, stats]) => ({ name, hourly: stats.hours > 0 ? stats.takeHome / stats.hours : 0, count: stats.count }))
+        .sort((a, b) => b.hourly - a.hourly);
+    }
+
+    function getDayRankings(items) {
+      const names = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      const grouped = {};
+      items.forEach(item => {
+        const day = names[new Date(`${item.date}T00:00:00`).getDay()];
+        if (!grouped[day]) grouped[day] = { hours: 0, takeHome: 0, count: 0 };
+        grouped[day].hours += item.hours;
+        grouped[day].takeHome += item.totalTakeHome;
+        grouped[day].count += 1;
+      });
+      return Object.entries(grouped)
+        .map(([name, stats]) => ({ name, hourly: stats.hours > 0 ? stats.takeHome / stats.hours : 0, count: stats.count }))
+        .sort((a, b) => b.hourly - a.hourly);
+    }
+
+    function populateFilterOptions() {
+      const jobs = [...new Set(shifts.map(s => s.job).filter(Boolean))].sort();
+      const roles = [...new Set(shifts.map(s => s.role).filter(Boolean))].sort();
+      const sections = [...new Set(shifts.map(s => s.section).filter(Boolean))].sort();
+
+      const preserve = {
+        job: elements.filterJob.value,
+        role: elements.filterRole.value,
+        section: elements.filterSection.value
+      };
+
+      elements.filterJob.innerHTML = `<option value="">All jobs</option>${jobs.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("")}`;
+      elements.filterRole.innerHTML = `<option value="">All roles</option>${roles.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("")}`;
+      elements.filterSection.innerHTML = `<option value="">All sections</option>${sections.map(v => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("")}`;
+
+      elements.filterJob.value = jobs.includes(preserve.job) ? preserve.job : "";
+      elements.filterRole.value = roles.includes(preserve.role) ? preserve.role : "";
+      elements.filterSection.value = sections.includes(preserve.section) ? preserve.section : "";
+    }
+
+    function updateFilterSummary(filteredShifts) {
+      const active = [];
+      if (elements.filterStartDate.value) active.push(`from ${elements.filterStartDate.value}`);
+      if (elements.filterEndDate.value) active.push(`through ${elements.filterEndDate.value}`);
+      if (elements.filterJob.value) active.push(`job: ${elements.filterJob.value}`);
+      if (elements.filterRole.value) active.push(`role: ${elements.filterRole.value}`);
+      if (elements.filterSection.value) active.push(`section: ${elements.filterSection.value}`);
+      if (elements.filterTag.value) active.push(`tag: ${elements.filterTag.value}`);
+
+      elements.filterSummary.textContent = active.length
+        ? `Showing ${filteredShifts.length} shift${filteredShifts.length === 1 ? "" : "s"} filtered ${active.join(" • ")}.`
+        : `Showing all ${filteredShifts.length} shift${filteredShifts.length === 1 ? "" : "s"}.`;
+    }
+
+    function renderHeroAndStats(filteredShifts) {
+      const totalGrossTips = filteredShifts.reduce((sum, item) => sum + item.grossTips, 0);
+      const totalNetTips = filteredShifts.reduce((sum, item) => sum + item.netTips, 0);
+      const totalTakeHome = filteredShifts.reduce((sum, item) => sum + item.totalTakeHome, 0);
+      const totalHours = filteredShifts.reduce((sum, item) => sum + item.hours, 0);
+      const overallNetHourly = totalHours > 0 ? totalTakeHome / totalHours : 0;
+      const averageShiftLength = filteredShifts.length > 0 ? totalHours / filteredShifts.length : 0;
+
+      const latestShift = filteredShifts[filteredShifts.length - 1] || null;
       const currentWeekStart = latestShift ? getWeekStart(latestShift.date) : null;
-      const currentWeekShifts = currentWeekStart ? shifts.filter(item => getWeekStart(item.date) === currentWeekStart) : [];
+      const currentWeekShifts = currentWeekStart ? filteredShifts.filter(item => getWeekStart(item.date) === currentWeekStart) : [];
       const currentWeekTakeHome = currentWeekShifts.reduce((sum, item) => sum + item.totalTakeHome, 0);
       const currentWeekHours = currentWeekShifts.reduce((sum, item) => sum + item.hours, 0);
       const currentWeekNetHourly = currentWeekHours > 0 ? currentWeekTakeHome / currentWeekHours : 0;
@@ -1080,6 +1742,7 @@
       document.getElementById("heroWeekTakeHome").textContent = formatCurrency(currentWeekTakeHome);
       document.getElementById("heroWeekHourly").textContent = formatCurrency(currentWeekNetHourly);
       document.getElementById("heroWeekShifts").textContent = String(currentWeekShifts.length);
+      document.getElementById("heroLastShift").textContent = latestShift ? latestShift.date : "—";
 
       document.getElementById("statTotalGrossTips").textContent = formatCurrency(totalGrossTips);
       document.getElementById("statTotalNetTips").textContent = formatCurrency(totalNetTips);
@@ -1088,25 +1751,468 @@
       document.getElementById("statCurrentWeekTakeHome").textContent = formatCurrency(currentWeekTakeHome);
       document.getElementById("statCurrentWeekNetHourly").textContent = formatCurrency(currentWeekNetHourly);
       document.getElementById("statTotalHours").textContent = totalHours.toFixed(2);
+      document.getElementById("statAverageShiftLength").textContent = `Avg shift length: ${averageShiftLength.toFixed(2)} hrs`;
 
-      if (shifts.length === 0) {
+      if (filteredShifts.length === 0) {
         document.getElementById("statBestShift").textContent = "$0.00/hr";
-        document.getElementById("statBestShiftMeta").textContent = "No shift yet.";
+        document.getElementById("statBestShiftMeta").textContent = "No shift in this view.";
         return;
       }
 
-      const bestShift = shifts.reduce((best, item) => item.netHourly > best.netHourly ? item : best, shifts[0]);
+      const bestShift = filteredShifts.reduce((best, item) => item.netHourly > best.netHourly ? item : best, filteredShifts[0]);
       document.getElementById("statBestShift").textContent = `${formatCurrency(bestShift.netHourly)}/hr`;
-      document.getElementById("statBestShiftMeta").textContent = `${bestShift.date} • ${bestShift.section}`;
+      document.getElementById("statBestShiftMeta").textContent = `${bestShift.date} • ${bestShift.job} • ${bestShift.section}`;
     }
 
-    function renderWeeklyDrawers() {
-      if (shifts.length === 0) {
-        elements.weeklyDrawers.innerHTML = `<div class="empty-state">No shifts saved yet. Add one above and the weekly drawers will appear here.</div>`;
+    function renderSectionPerformance(filteredShifts) {
+      if (!filteredShifts.length) {
+        elements.sectionPerformance.innerHTML = `<div class="empty-state">No section data in this view.</div>`;
+        return;
+      }
+      const grouped = {};
+      filteredShifts.forEach(item => {
+        if (!grouped[item.section]) grouped[item.section] = [];
+        grouped[item.section].push(item);
+      });
+      const rows = Object.entries(grouped)
+        .map(([name, items]) => {
+          const hours = items.reduce((s, i) => s + i.hours, 0);
+          const takeHome = items.reduce((s, i) => s + i.totalTakeHome, 0);
+          const hourly = hours > 0 ? takeHome / hours : 0;
+          return { name, items, hourly, takeHome };
+        })
+        .sort((a, b) => b.hourly - a.hourly)
+        .map(row => `
+          <div class="stat-card" style="min-height:auto;">
+            <div class="stat-label">${escapeHtml(row.name)}</div>
+            <div class="stat-value">${formatCurrency(row.hourly)}/hr</div>
+            <div class="stat-meta">${row.items.length} shift${row.items.length === 1 ? "" : "s"} • ${formatCurrency(row.takeHome)} take-home</div>
+          </div>
+        `).join("");
+      elements.sectionPerformance.innerHTML = rows;
+    }
+
+    function renderDayPerformance(filteredShifts) {
+      if (!filteredShifts.length) {
+        elements.dayPerformance.innerHTML = `<div class="empty-state">No weekday data in this view.</div>`;
+        return;
+      }
+      const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      const grouped = {};
+      filteredShifts.forEach(item => {
+        const idx = new Date(`${item.date}T00:00:00`).getDay();
+        if (!grouped[idx]) grouped[idx] = [];
+        grouped[idx].push(item);
+      });
+      const rows = Object.keys(grouped)
+        .map(idx => {
+          const items = grouped[idx];
+          const hours = items.reduce((s, i) => s + i.hours, 0);
+          const takeHome = items.reduce((s, i) => s + i.totalTakeHome, 0);
+          return { idx: Number(idx), name: dayNames[idx], hourly: hours > 0 ? takeHome / hours : 0, count: items.length };
+        })
+        .sort((a, b) => a.idx - b.idx)
+        .map(row => `
+          <div class="stat-card" style="min-height:auto;">
+            <div class="stat-label">${row.name}</div>
+            <div class="stat-value">${formatCurrency(row.hourly)}/hr</div>
+            <div class="stat-meta">${row.count} shift${row.count === 1 ? "" : "s"}</div>
+          </div>
+        `).join("");
+      elements.dayPerformance.innerHTML = rows;
+    }
+
+    function renderTagPerformance(filteredShifts) {
+      const tagged = filteredShifts.filter(item => item.tag);
+      if (!tagged.length) {
+        elements.tagPerformance.innerHTML = `<div class="empty-state">No tags in this view yet.</div>`;
+        return;
+      }
+      const grouped = {};
+      tagged.forEach(item => {
+        if (!grouped[item.tag]) grouped[item.tag] = [];
+        grouped[item.tag].push(item);
+      });
+      elements.tagPerformance.innerHTML = Object.entries(grouped)
+        .map(([tag, items]) => {
+          const hours = items.reduce((s, i) => s + i.hours, 0);
+          const takeHome = items.reduce((s, i) => s + i.totalTakeHome, 0);
+          const hourly = hours > 0 ? takeHome / hours : 0;
+          return `
+            <div class="stat-card">
+              <div class="stat-label">${escapeHtml(tag)}</div>
+              <div class="stat-value">${formatCurrency(hourly)}/hr</div>
+              <div class="stat-meta">${items.length} shift${items.length === 1 ? "" : "s"} • ${formatCurrency(takeHome)} take-home</div>
+            </div>
+          `;
+        }).join("");
+    }
+
+    function renderTrendSummary(filteredShifts) {
+      if (!filteredShifts.length) {
+        elements.trendSummary.innerHTML = `<div class="empty-state">No trend data in this view.</div>`;
         return;
       }
 
-      const grouped = groupByWeek(shifts);
+      const sorted = filteredShifts.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+      const first = sorted[0];
+      const last = sorted[sorted.length - 1];
+      const best = sorted.reduce((bestItem, item) => item.netHourly > bestItem.netHourly ? item : bestItem, sorted[0]);
+      const salesTotal = sorted.reduce((sum, item) => sum + item.sales, 0);
+      const grossTips = sorted.reduce((sum, item) => sum + item.grossTips, 0);
+      const blendedTipPct = salesTotal > 0 ? (grossTips / salesTotal) * 100 : 0;
+
+      elements.trendSummary.innerHTML = `
+        <div class="mini-trend">
+          <div class="mini-trend-label">Range</div>
+          <div class="mini-trend-value">${first.date} → ${last.date}</div>
+          <div class="mini-trend-meta">${sorted.length} shift${sorted.length === 1 ? "" : "s"} in view</div>
+        </div>
+        <div class="mini-trend">
+          <div class="mini-trend-label">Best Net Hourly</div>
+          <div class="mini-trend-value">${formatCurrency(best.netHourly)}/hr</div>
+          <div class="mini-trend-meta">${best.date} • ${best.section}</div>
+        </div>
+        <div class="mini-trend">
+          <div class="mini-trend-label">Blended Tip %</div>
+          <div class="mini-trend-value">${formatPercent(blendedTipPct)}</div>
+          <div class="mini-trend-meta">Gross tips vs total sales in current view</div>
+        </div>
+      `;
+    }
+
+    function renderKpiStrip(filteredShifts) {
+      if (!filteredShifts.length) {
+        elements.kpiStrip.innerHTML = `<div class="empty-state">No KPI data in this view.</div>`;
+        return;
+      }
+      const totalTakeHome = filteredShifts.reduce((s, i) => s + i.totalTakeHome, 0);
+      const totalHours = filteredShifts.reduce((s, i) => s + i.hours, 0);
+      const avgShift = filteredShifts.length ? totalTakeHome / filteredShifts.length : 0;
+      const sectionRankings = getSectionRankings(filteredShifts);
+      const dayRankings = getDayRankings(filteredShifts);
+      const bestSection = sectionRankings[0];
+      const bestDay = dayRankings[0];
+      const topTag = (() => {
+        const tagCounts = {};
+        filteredShifts.filter(i => i.tag).forEach(i => { tagCounts[i.tag] = (tagCounts[i.tag] || 0) + 1; });
+        const top = Object.entries(tagCounts).sort((a, b) => b[1] - a[1])[0];
+        return top ? `${top[0]} (${top[1]})` : "No tags";
+      })();
+
+      document.getElementById("drawerBestSection").textContent = bestSection ? `${bestSection.name} • ${formatCurrency(bestSection.hourly)}/hr` : "—";
+      document.getElementById("drawerBestDay").textContent = bestDay ? `${bestDay.name} • ${formatCurrency(bestDay.hourly)}/hr` : "—";
+      document.getElementById("drawerAvgShift").textContent = formatCurrency(avgShift);
+
+      elements.kpiStrip.innerHTML = `
+        <div class="kpi-card">
+          <div class="kpi-label">Avg Take-Home / Shift</div>
+          <div class="kpi-value">${formatCurrency(avgShift)}</div>
+          <div class="kpi-meta">${filteredShifts.length} shift${filteredShifts.length === 1 ? "" : "s"} in current slice</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Best Section</div>
+          <div class="kpi-value">${bestSection ? bestSection.name : "—"}</div>
+          <div class="kpi-meta">${bestSection ? `${formatCurrency(bestSection.hourly)}/hr` : "No section data"}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Best Day</div>
+          <div class="kpi-value">${bestDay ? bestDay.name : "—"}</div>
+          <div class="kpi-meta">${bestDay ? `${formatCurrency(bestDay.hourly)}/hr` : "No weekday data"}</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Dominant Tag</div>
+          <div class="kpi-value">${topTag}</div>
+          <div class="kpi-meta">Structured context from the active view</div>
+        </div>
+      `;
+    }
+
+    function destroyChart(name) {
+      if (chartRegistry[name]) {
+        chartRegistry[name].destroy();
+        chartRegistry[name] = null;
+      }
+    }
+
+    function buildChart(name, canvasId, config) {
+      destroyChart(name);
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      chartRegistry[name] = new Chart(ctx, config);
+    }
+
+    function chartBaseOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: { color: "#e9f5f4" }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: "#97b6b2" },
+            grid: { color: "rgba(255,255,255,0.05)" }
+          },
+          y: {
+            ticks: {
+              color: "#97b6b2",
+              callback: value => "$" + value
+            },
+            grid: { color: "rgba(255,255,255,0.05)" }
+          }
+        }
+      };
+    }
+
+    function renderCharts(filteredShifts) {
+      const sorted = filteredShifts.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
+
+      buildChart("hourlyTrend", "hourlyTrendChart", {
+        type: "line",
+        data: {
+          labels: sorted.map(item => item.date),
+          datasets: [{
+            label: "Net Hourly",
+            data: sorted.map(item => Number(item.netHourly.toFixed(2))),
+            borderColor: "#2ad8c7",
+            backgroundColor: "rgba(42,216,199,0.16)",
+            fill: true,
+            tension: 0.28,
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 5
+          }]
+        },
+        options: chartBaseOptions()
+      });
+
+      const bySection = {};
+      filteredShifts.forEach(item => {
+        if (!bySection[item.section]) bySection[item.section] = [];
+        bySection[item.section].push(item);
+      });
+      const sectionLabels = Object.keys(bySection);
+      const sectionData = sectionLabels.map(label => {
+        const items = bySection[label];
+        const hours = items.reduce((sum, item) => sum + item.hours, 0);
+        const takeHome = items.reduce((sum, item) => sum + item.totalTakeHome, 0);
+        return Number((hours > 0 ? takeHome / hours : 0).toFixed(2));
+      });
+
+      buildChart("section", "sectionChart", {
+        type: "bar",
+        data: {
+          labels: sectionLabels,
+          datasets: [{
+            label: "Section Avg / Hr",
+            data: sectionData,
+            backgroundColor: "rgba(42,216,199,0.58)",
+            borderColor: "#2ad8c7",
+            borderWidth: 1.5,
+            borderRadius: 8
+          }]
+        },
+        options: chartBaseOptions()
+      });
+
+      const byWeek = groupByWeek(filteredShifts);
+      const weekLabels = Object.keys(byWeek).sort((a, b) => new Date(a) - new Date(b));
+      const weekData = weekLabels.map(weekStart => {
+        const items = byWeek[weekStart];
+        return Number(items.reduce((sum, item) => sum + item.totalTakeHome, 0).toFixed(2));
+      });
+
+      buildChart("weekly", "weeklyChart", {
+        type: "line",
+        data: {
+          labels: weekLabels,
+          datasets: [{
+            label: "Weekly Take-Home",
+            data: weekData,
+            borderColor: "#79e7c2",
+            backgroundColor: "rgba(121,231,194,0.14)",
+            fill: true,
+            tension: 0.22,
+            borderWidth: 2,
+            pointRadius: 3,
+            pointHoverRadius: 5
+          }]
+        },
+        options: chartBaseOptions()
+      });
+
+      const tagged = filteredShifts.filter(item => item.tag);
+      const byTag = {};
+      tagged.forEach(item => {
+        if (!byTag[item.tag]) byTag[item.tag] = 0;
+        byTag[item.tag] += 1;
+      });
+      const tagLabels = Object.keys(byTag);
+      const tagData = tagLabels.map(label => byTag[label]);
+
+      buildChart("tag", "tagChart", {
+        type: "doughnut",
+        data: {
+          labels: tagLabels,
+          datasets: [{
+            label: "Tag Count",
+            data: tagData,
+            backgroundColor: [
+              "rgba(42,216,199,0.88)", "rgba(24,185,168,0.88)", "rgba(121,231,194,0.88)", "rgba(255,191,97,0.88)",
+              "rgba(255,111,123,0.82)", "rgba(90,177,173,0.84)", "rgba(31,124,117,0.9)", "rgba(171,255,240,0.82)"
+            ],
+            borderColor: "#091012",
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: "#e9f5f4" } } }
+        }
+      });
+    }
+
+    function renderGoalsAndCalendar(filteredShifts) {
+      const weeklyGoal = loadGoalValue("shiftDashboardWeeklyGoal");
+      const monthlyGoal = loadGoalValue("shiftDashboardMonthlyGoal");
+      elements.weeklyGoal.value = weeklyGoal || "";
+      elements.monthlyGoal.value = monthlyGoal || "";
+
+      const latestShift = filteredShifts[filteredShifts.length - 1] || shifts[shifts.length - 1] || null;
+      const weekStart = latestShift ? getWeekStart(latestShift.date) : null;
+      const weeklyTotal = weekStart ? filteredShifts.filter(item => getWeekStart(item.date) === weekStart).reduce((sum, item) => sum + item.totalTakeHome, 0) : 0;
+
+      const monthStartKey = `${calendarCursor.year}-${String(calendarCursor.month + 1).padStart(2, "0")}`;
+      const monthlyTotal = shifts.filter(item => item.date.startsWith(monthStartKey)).reduce((sum, item) => sum + item.totalTakeHome, 0);
+
+      const weeklyPct = weeklyGoal > 0 ? Math.min((weeklyTotal / weeklyGoal) * 100, 100) : 0;
+      const monthlyPct = monthlyGoal > 0 ? Math.min((monthlyTotal / monthlyGoal) * 100, 100) : 0;
+
+      elements.weeklyGoalBar.style.width = `${weeklyPct}%`;
+      elements.monthlyGoalBar.style.width = `${monthlyPct}%`;
+      elements.weeklyGoalSummary.textContent = weeklyGoal > 0
+        ? `${formatCurrency(weeklyTotal)} of ${formatCurrency(weeklyGoal)} • ${weeklyPct.toFixed(1)}% reached`
+        : "No weekly goal set.";
+      elements.monthlyGoalSummary.textContent = monthlyGoal > 0
+        ? `${formatCurrency(monthlyTotal)} of ${formatCurrency(monthlyGoal)} • ${monthlyPct.toFixed(1)}% reached`
+        : "No monthly goal set.";
+
+      renderCalendar();
+      renderInsights(filteredShifts);
+    }
+
+    function renderCalendar() {
+      const year = calendarCursor.year;
+      const month = calendarCursor.month;
+      const first = new Date(year, month, 1);
+      const last = new Date(year, month + 1, 0);
+      const title = first.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+      elements.calendarTitle.textContent = title;
+
+      const monthKey = `${year}-${String(month + 1).padStart(2, "0")}`;
+      const monthShifts = shifts.filter(item => item.date.startsWith(monthKey));
+      const dayTotals = {};
+      monthShifts.forEach(item => {
+        if (!dayTotals[item.date]) dayTotals[item.date] = { takeHome: 0, count: 0 };
+        dayTotals[item.date].takeHome += item.totalTakeHome;
+        dayTotals[item.date].count += 1;
+      });
+      const maxTakeHome = Math.max(0, ...Object.values(dayTotals).map(v => v.takeHome));
+
+      const heads = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(day => `<div class="calendar-head">${day}</div>`).join("");
+      const cells = [];
+      for (let i = 0; i < first.getDay(); i++) {
+        cells.push(`<div class="calendar-day empty"></div>`);
+      }
+      for (let d = 1; d <= last.getDate(); d++) {
+        const iso = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+        const total = dayTotals[iso]?.takeHome || 0;
+        const count = dayTotals[iso]?.count || 0;
+        const intensity = maxTakeHome > 0 ? Math.ceil((total / maxTakeHome) * 4) : 0;
+        cells.push(`
+          <div class="calendar-day ${intensity ? `active-${intensity}` : ""}">
+            <div class="calendar-date">${d}</div>
+            <div class="calendar-value">${total > 0 ? formatCurrency(total) : "—"}</div>
+            <div class="calendar-meta">${count > 0 ? `${count} shift${count === 1 ? "" : "s"}` : "No shifts"}</div>
+          </div>
+        `);
+      }
+      elements.calendarGrid.innerHTML = heads + cells.join("");
+    }
+
+    function renderInsights(filteredShifts) {
+      if (!filteredShifts.length) {
+        elements.insightList.innerHTML = `<div class="empty-state">No insights in this view yet.</div>`;
+        return;
+      }
+
+      const bestSectionMap = {};
+      filteredShifts.forEach(item => {
+        if (!bestSectionMap[item.section]) bestSectionMap[item.section] = { hours: 0, takeHome: 0, count: 0 };
+        bestSectionMap[item.section].hours += item.hours;
+        bestSectionMap[item.section].takeHome += item.totalTakeHome;
+        bestSectionMap[item.section].count += 1;
+      });
+      const bestSection = Object.entries(bestSectionMap)
+        .map(([name, stats]) => ({ name, hourly: stats.hours > 0 ? stats.takeHome / stats.hours : 0, count: stats.count }))
+        .sort((a, b) => b.hourly - a.hourly)[0];
+
+      const bestDayMap = {};
+      const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      filteredShifts.forEach(item => {
+        const day = dayNames[new Date(`${item.date}T00:00:00`).getDay()];
+        if (!bestDayMap[day]) bestDayMap[day] = { hours: 0, takeHome: 0, count: 0 };
+        bestDayMap[day].hours += item.hours;
+        bestDayMap[day].takeHome += item.totalTakeHome;
+        bestDayMap[day].count += 1;
+      });
+      const bestDay = Object.entries(bestDayMap)
+        .map(([name, stats]) => ({ name, hourly: stats.hours > 0 ? stats.takeHome / stats.hours : 0, count: stats.count }))
+        .sort((a, b) => b.hourly - a.hourly)[0];
+
+      const slowTagged = filteredShifts.filter(item => item.tag === "slow");
+      const busyTagged = filteredShifts.filter(item => item.tag === "busy");
+      const slowHourly = slowTagged.reduce((s, i) => s + i.totalTakeHome, 0) / Math.max(1, slowTagged.reduce((s, i) => s + i.hours, 0));
+      const busyHourly = busyTagged.reduce((s, i) => s + i.totalTakeHome, 0) / Math.max(1, busyTagged.reduce((s, i) => s + i.hours, 0));
+
+      const insights = [
+        bestSection ? {
+          title: "Best section in this view",
+          body: `${bestSection.name} is leading at ${formatCurrency(bestSection.hourly)}/hr across ${bestSection.count} shift${bestSection.count === 1 ? "" : "s"}.`
+        } : null,
+        bestDay ? {
+          title: "Best weekday in this view",
+          body: `${bestDay.name} is currently strongest at ${formatCurrency(bestDay.hourly)}/hr across ${bestDay.count} shift${bestDay.count === 1 ? "" : "s"}.`
+        } : null,
+        slowTagged.length || busyTagged.length ? {
+          title: "Busy vs slow tag comparison",
+          body: `Busy-tagged shifts average ${formatCurrency(busyHourly)}/hr while slow-tagged shifts average ${formatCurrency(slowHourly)}/hr in the current slice.`
+        } : {
+          title: "Tag comparison not ready",
+          body: `You need at least some busy or slow tags before the app can compare those conditions meaningfully.`
+        }
+      ].filter(Boolean);
+
+      elements.insightList.innerHTML = insights.map(item => `
+        <div class="insight-item">
+          <div class="insight-title">${escapeHtml(item.title)}</div>
+          <div class="insight-body">${escapeHtml(item.body)}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderWeeklyDrawers(filteredShifts) {
+      if (filteredShifts.length === 0) {
+        elements.weeklyDrawers.innerHTML = `<div class="empty-state">No shifts match this filter view. The drawers are empty, not haunted.</div>`;
+        return;
+      }
+
+      const grouped = groupByWeek(filteredShifts);
       const weekStarts = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
 
       elements.weeklyDrawers.innerHTML = weekStarts.map((weekStart, index) => {
@@ -1115,6 +2221,7 @@
         const weekTakeHome = items.reduce((sum, item) => sum + item.totalTakeHome, 0);
         const weekHours = items.reduce((sum, item) => sum + item.hours, 0);
         const weekNetHourly = weekHours > 0 ? weekTakeHome / weekHours : 0;
+        const weekGrossTips = items.reduce((sum, item) => sum + item.grossTips, 0);
         const weekLabel = formatWeekRange(weekStart, weekEnd);
 
         const rows = items.map(item => `
@@ -1124,6 +2231,8 @@
             <td>${escapeHtml(item.role)}</td>
             <td>${escapeHtml(item.section)}</td>
             <td>${item.hours.toFixed(2)}</td>
+            <td>${formatCurrency(item.cashTips)} <span class="number-subtle">cash</span></td>
+            <td>${formatCurrency(item.creditTips)} <span class="number-subtle">credit</span></td>
             <td>${formatCurrency(item.grossTips)}</td>
             <td>${formatCurrency(item.tipOut)}</td>
             <td>${formatCurrency(item.netTips)}</td>
@@ -1145,7 +2254,7 @@
             <summary>
               <div class="week-left">
                 <div class="week-title">${weekLabel}</div>
-                <div class="week-meta">${items.length} shift${items.length === 1 ? "" : "s"} • Friday to Thursday</div>
+                <div class="week-meta">${items.length} shift${items.length === 1 ? "" : "s"} • ${formatCurrency(weekGrossTips)} gross tips</div>
               </div>
               <div class="week-right">
                 <div>${formatCurrency(weekTakeHome)} take-home</div>
@@ -1161,6 +2270,8 @@
                     <th>Role</th>
                     <th>Section</th>
                     <th>Hours</th>
+                    <th>Cash</th>
+                    <th>Credit</th>
                     <th>Gross Tips</th>
                     <th>Tip-Out</th>
                     <th>Net Tips</th>
@@ -1186,54 +2297,23 @@
       }
 
       const header = [
-        "ID",
-        "Date",
-        "Job",
-        "Role",
-        "Section",
-        "Hours",
-        "Cash Tips",
-        "Credit Tips",
-        "Gross Tips",
-        "Sales",
-        "Tip-Out",
-        "Other Deductions",
-        "Net Tips",
-        "Base Wage",
-        "Total Take-Home",
-        "Gross Hourly",
-        "Net Hourly",
-        "Tip Percent Of Sales",
-        "Tag",
-        "Created At",
-        "Updated At"
+        "ID","Date","Job","Role","Section","Hours","Cash Tips","Credit Tips","Gross Tips","Sales",
+        "Tip-Out","Other Deductions","Net Tips","Base Wage","Total Take-Home","Gross Hourly",
+        "Net Hourly","Tip Percent Of Sales","Tag","Created At","Updated At"
       ].join(",");
 
       const rows = shifts.map(item => [
-        csvSafe(item.id),
-        csvSafe(item.date),
-        csvSafe(item.job),
-        csvSafe(item.role),
-        csvSafe(item.section),
-        csvSafe(item.hours.toFixed(2)),
-        csvSafe(item.cashTips.toFixed(2)),
-        csvSafe(item.creditTips.toFixed(2)),
-        csvSafe(item.grossTips.toFixed(2)),
-        csvSafe(item.sales.toFixed(2)),
-        csvSafe(item.tipOut.toFixed(2)),
-        csvSafe(item.otherDeductions.toFixed(2)),
-        csvSafe(item.netTips.toFixed(2)),
-        csvSafe(item.baseWage.toFixed(2)),
-        csvSafe(item.totalTakeHome.toFixed(2)),
-        csvSafe(item.grossHourly.toFixed(2)),
-        csvSafe(item.netHourly.toFixed(2)),
-        csvSafe(item.tipPercentOfSales.toFixed(2)),
-        csvSafe(item.tag),
-        csvSafe(item.createdAt),
-        csvSafe(item.updatedAt)
+        csvSafe(item.id), csvSafe(item.date), csvSafe(item.job), csvSafe(item.role), csvSafe(item.section),
+        csvSafe(item.hours.toFixed(2)), csvSafe(item.cashTips.toFixed(2)), csvSafe(item.creditTips.toFixed(2)),
+        csvSafe(item.grossTips.toFixed(2)), csvSafe(item.sales.toFixed(2)), csvSafe(item.tipOut.toFixed(2)),
+        csvSafe(item.otherDeductions.toFixed(2)), csvSafe(item.netTips.toFixed(2)), csvSafe(item.baseWage.toFixed(2)),
+        csvSafe(item.totalTakeHome.toFixed(2)), csvSafe(item.grossHourly.toFixed(2)), csvSafe(item.netHourly.toFixed(2)),
+        csvSafe(item.tipPercentOfSales.toFixed(2)), csvSafe(item.tag), csvSafe(item.createdAt), csvSafe(item.updatedAt)
       ].join(","));
 
-      const csv = `${header}\n${rows.join("\n")}`;
+      const csv = `${header}
+${rows.join("
+")}`;
       const blob = new Blob([csv], { type: "text/csv" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -1250,22 +2330,59 @@
         alert("There is nothing to clear.");
         return;
       }
-
       const confirmed = confirm("Clear all saved shift data? This removes everything stored in the browser for this dashboard.");
       if (!confirmed) return;
-
       shifts = [];
       saveShifts();
       cancelEdit();
       renderAll();
     }
 
+    function setDateInputToThisWeek() {
+      if (!shifts.length) return;
+      const latest = shifts[shifts.length - 1];
+      const weekStart = getWeekStart(latest.date);
+      const weekEnd = getWeekEnd(weekStart);
+      elements.filterStartDate.value = weekStart;
+      elements.filterEndDate.value = weekEnd;
+    }
+
+    function setDateInputToThisMonth() {
+      const base = shifts[shifts.length - 1]?.date;
+      if (!base) return;
+      const d = new Date(`${base}T00:00:00`);
+      const start = new Date(d.getFullYear(), d.getMonth(), 1);
+      const end = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+      elements.filterStartDate.value = start.toISOString().split("T")[0];
+      elements.filterEndDate.value = end.toISOString().split("T")[0];
+    }
+
+    function clearFilters() {
+      elements.filterStartDate.value = "";
+      elements.filterEndDate.value = "";
+      elements.filterJob.value = "";
+      elements.filterRole.value = "";
+      elements.filterSection.value = "";
+      elements.filterTag.value = "";
+      renderAll();
+    }
+
     function renderAll() {
       sortShifts();
+      populateFilterOptions();
       refreshPreview();
       updateModeNote();
-      renderHeroAndStats();
-      renderWeeklyDrawers();
+      const filteredShifts = getFilteredShifts();
+      updateFilterSummary(filteredShifts);
+      renderHeroAndStats(filteredShifts);
+      renderKpiStrip(filteredShifts);
+      renderSectionPerformance(filteredShifts);
+      renderDayPerformance(filteredShifts);
+      renderTagPerformance(filteredShifts);
+      renderTrendSummary(filteredShifts);
+      renderCharts(filteredShifts);
+      renderGoalsAndCalendar(filteredShifts);
+      renderWeeklyDrawers(filteredShifts);
     }
 
     function bindPreviewListeners() {
@@ -1286,17 +2403,48 @@
       elements.weeklySection.scrollIntoView({ behavior: "smooth", block: "start" });
     });
     elements.exportBtn.addEventListener("click", exportCSV);
+    elements.showAllBtn.addEventListener("click", clearFilters);
+    elements.last7Btn.addEventListener("click", () => {
+      const base = shifts[shifts.length - 1]?.date;
+      if (!base) return;
+      const d = new Date(`${base}T00:00:00`);
+      const start = new Date(d);
+      start.setDate(start.getDate() - 6);
+      elements.filterStartDate.value = start.toISOString().split("T")[0];
+      elements.filterEndDate.value = base;
+      renderAll();
+    });
+    elements.bestSectionBtn.addEventListener("click", () => {
+      const ranking = getSectionRankings(shifts)[0];
+      if (!ranking) return;
+      elements.filterSection.value = ranking.name;
+      renderAll();
+    });
+    elements.worstSectionBtn.addEventListener("click", () => {
+      const rankings = getSectionRankings(shifts);
+      const ranking = rankings[rankings.length - 1];
+      if (!ranking) return;
+      elements.filterSection.value = ranking.name;
+      renderAll();
+    });
+    elements.weeklyGoal.addEventListener("input", () => { saveGoalValue("shiftDashboardWeeklyGoal", safeNum(elements.weeklyGoal.value)); renderAll(); });
+    elements.monthlyGoal.addEventListener("input", () => { saveGoalValue("shiftDashboardMonthlyGoal", safeNum(elements.monthlyGoal.value)); renderAll(); });
+    elements.calendarPrevBtn.addEventListener("click", () => { calendarCursor.month -= 1; if (calendarCursor.month < 0) { calendarCursor.month = 11; calendarCursor.year -= 1; } renderAll(); });
+    elements.calendarNextBtn.addEventListener("click", () => { calendarCursor.month += 1; if (calendarCursor.month > 11) { calendarCursor.month = 0; calendarCursor.year += 1; } renderAll(); });
+    elements.calendarTodayBtn.addEventListener("click", () => { calendarCursor = getInitialCalendarCursor(); renderAll(); });
+    [elements.filterStartDate, elements.filterEndDate, elements.filterJob, elements.filterRole, elements.filterSection, elements.filterTag].forEach(el => {
+      el.addEventListener("input", renderAll);
+      el.addEventListener("change", renderAll);
+    });
+    elements.clearFiltersBtn.addEventListener("click", clearFilters);
+    elements.thisWeekBtn.addEventListener("click", () => { setDateInputToThisWeek(); renderAll(); });
+    elements.thisMonthBtn.addEventListener("click", () => { setDateInputToThisMonth(); renderAll(); });
     elements.clearAllBtn.addEventListener("click", clearAllData);
 
     bindPreviewListeners();
 
-    window.startEditById = function(id) {
-      startEdit(id);
-    };
-
-    window.deleteShiftById = function(id) {
-      deleteShift(id);
-    };
+    window.startEditById = function(id) { startEdit(id); };
+    window.deleteShiftById = function(id) { deleteShift(id); };
 
     renderAll();
   </script>
