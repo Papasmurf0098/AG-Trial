@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shift Tracker</title>
+
+<style>
+
+body{
+background:#121212;
+color:white;
+font-family:Arial;
+padding:20px;
+}
+
+h1{
+text-align:center;
+color:#00e5d4;
+}
+
+input, textarea, button{
+width:100%;
+padding:12px;
+margin:6px 0;
+font-size:16px;
+border-radius:6px;
+border:none;
+}
+
+input, textarea{
+background:#1f1f1f;
+color:white;
+border:1px solid #333;
+}
+
+button{
+background:#00e5d4;
+color:black;
+font-weight:bold;
+}
+
+table{
+width:100%;
+margin-top:20px;
+border-collapse:collapse;
+}
+
+th{
+background:#00e5d4;
+color:black;
+}
+
+td{
+border:1px solid #333;
+padding:8px;
+text-align:center;
+}
+
+.summary{
+margin-top:20px;
+font-weight:bold;
+line-height:1.8;
+}
+
+.deleteBtn{
+background:#ff4d4d;
+color:white;
+border:none;
+padding:6px 10px;
+border-radius:4px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>Shift Income Tracker</h1>
+
+<input type="date" id="date">
+
+<input type="text" id="section" placeholder="Section">
+
+<input type="number" id="hours" placeholder="Hours Worked">
+
+<input type="number" id="tips" placeholder="Tips Earned">
+
+<textarea id="comments" placeholder="Comments for this shift"></textarea>
+
+<button onclick="addShift()">Add Shift</button>
+
+<table id="shiftTable">
+
+<tr>
+<th>Date</th>
+<th>Section</th>
+<th>Hours</th>
+<th>Tips</th>
+<th>$ / Hr</th>
+<th>Comments</th>
+<th>Delete</th>
+</tr>
+
+</table>
+
+<div class="summary">
+
+Total Tips: $<span id="totalTips">0</span><br>
+Total Hours: <span id="totalHours">0</span><br>
+Overall Avg: $<span id="overallAvg">0</span><br>
+Weekly Avg (Fri-Thu): $<span id="weeklyAvg">0</span>
+
+</div>
+
+<script>
+
+let shifts = JSON.parse(localStorage.getItem("shiftData")) || []
+
+function saveData(){
+localStorage.setItem("shiftData", JSON.stringify(shifts))
+}
+
+function addShift(){
+
+let date=document.getElementById("date").value
+let section=document.getElementById("section").value
+let hours=parseFloat(document.getElementById("hours").value)
+let tips=parseFloat(document.getElementById("tips").value)
+let comments=document.getElementById("comments").value
+
+if(!date || !section || !hours || !tips){
+alert("Fill all fields")
+return
+}
+
+let hourly = tips / hours
+
+shifts.push({
+date,
+section,
+hours,
+tips,
+hourly,
+comments
+})
+
+saveData()
+
+renderTable()
+calculateTotals()
+
+}
+
+function deleteShift(i){
+
+shifts.splice(i,1)
+
+saveData()
+
+renderTable()
+calculateTotals()
+
+}
+
+function renderTable(){
+
+let table=document.getElementById("shiftTable")
+
+table.innerHTML=`
+<tr>
+<th>Date</th>
+<th>Section</th>
+<th>Hours</th>
+<th>Tips</th>
+<th>$ / Hr</th>
+<th>Comments</th>
+<th>Delete</th>
+</tr>
+`
+
+shifts.forEach((shift,index)=>{
+
+table.innerHTML += `
+<tr>
+<td>${shift.date}</td>
+<td>${shift.section}</td>
+<td>${shift.hours}</td>
+<td>$${shift.tips}</td>
+<td>$${shift.hourly.toFixed(2)}</td>
+<td>${shift.comments}</td>
+<td><button class="deleteBtn" onclick="deleteShift(${index})">X</button></td>
+</tr>
+`
+
+})
+
+}
+
+function calculateTotals(){
+
+let tips = shifts.reduce((sum,s)=>sum+s.tips,0)
+let hours = shifts.reduce((sum,s)=>sum+s.hours,0)
+
+let overall = hours ? tips/hours : 0
+
+document.getElementById("totalTips").innerText = tips.toFixed(2)
+document.getElementById("totalHours").innerText = hours.toFixed(2)
+document.getElementById("overallAvg").innerText = overall.toFixed(2)
+
+calculateWeekly()
+
+}
+
+function calculateWeekly(){
+
+if(shifts.length === 0){
+document.getElementById("weeklyAvg").innerText="0"
+return
+}
+
+let latest = shifts[shifts.length-1].date
+let start = getWeekStart(latest)
+
+let week = shifts.filter(s => getWeekStart(s.date) === start)
+
+let tips = week.reduce((sum,s)=>sum+s.tips,0)
+let hours = week.reduce((sum,s)=>sum+s.hours,0)
+
+let avg = hours ? tips/hours : 0
+
+document.getElementById("weeklyAvg").innerText = avg.toFixed(2)
+
+}
+
+function getWeekStart(dateString){
+
+let d = new Date(dateString)
+
+let day = d.getDay()
+
+let diff
+
+if(day >= 5){
+diff = day - 5
+}else{
+diff = day + 2
+}
+
+d.setDate(d.getDate() - diff)
+
+return d.toISOString().split("T")[0]
+
+}
+
+renderTable()
+calculateTotals()
+
+</script>
+
+</body>
+</html>
